@@ -17,7 +17,6 @@ export async function query(sql, params = []) {
     try {
         const [results] = await pool.execute(sql, params);
 
-        // ✅ Ensure we always return an array
         if (!Array.isArray(results)) {
             throw new Error("Database query did not return an array");
         }
@@ -25,7 +24,7 @@ export async function query(sql, params = []) {
         return results;
     } catch (error) {
         console.error("Database query error:", error);
-        return []; // ✅ Return an empty array to prevent `map` errors
+        return [];
     }
 }
 
