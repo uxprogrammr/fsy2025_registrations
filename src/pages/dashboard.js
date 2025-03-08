@@ -15,7 +15,7 @@ export default function Dashboard() {
         unit_participants: [],
     });
 
-    const [selectedStake, setSelectedStake] = useState("");
+    const [selectedStake, setSelectedStake] = useState("All Stakes");
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
     const [participantType] = useState("Participant");
