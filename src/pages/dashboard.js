@@ -17,7 +17,6 @@ export default function Dashboard() {
     const [selectedStake, setSelectedStake] = useState("");
 
     const [participantType, setParticipantType] = useState("Participant");
-    const [stakeName, setStakeName] = useState("");
 
     const stakes = [
         "All Stakes",
