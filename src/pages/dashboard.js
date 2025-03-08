@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { LineGraph, BarGraph, PieGraph } from "@/components/Charts";
-import Metrics from "@/components/Metrics";
-import DataTable from "@/components/DataTable";
 import '@/app/globals.css';
 
 
