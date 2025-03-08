@@ -25,7 +25,6 @@ export default function Dashboard() {
         "Antique Philippines District",
         "Kalibo Philippines Stake",
         "Pandan Philippines District",
-        "Quezon City Philippines South Stake",
         "Roxas Capiz Philippines Stake",
     ];
 
