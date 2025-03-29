@@ -1,36 +1,49 @@
 import React from 'react';
-import dynamic from "next/dynamic";
-
-const WordCloud = dynamic(() => import("react-wordcloud"), { ssr: false });
+import { TagCloud } from 'react-tagcloud';
 
 export function WordCloudChart({ words, title }) {
     // Prepare words for the cloud
     const wordData = words.reduce((acc, word) => {
-        const found = acc.find(w => w.text === word);
+        const found = acc.find(w => w.value === word);
         if (found) {
-            found.value += 1;
+            found.count += 1;
         } else {
-            acc.push({ text: word, value: 1 });
+            acc.push({ value: word, count: 1 });
         }
         return acc;
     }, []);
 
-    // WordCloud options
-    const options = {
-        rotations: 2,
-        rotationAngles: [-90, 0],
-        fontSizes: [20, 60],
-        enableTooltip: true,
-        scale: 'sqrt',
-        fontFamily: 'Arial',
-    };
+    // Custom renderer for words to add separation and style
+    const customRenderer = (tag, size, color) => (
+        <span
+            key={tag.value}
+            style={{
+                margin: '5px',
+                padding: '5px 8px',
+                display: 'inline-block',
+                fontSize: `${size}px`,
+                fontWeight: 'bold',
+                borderRadius: '8px',
+                backgroundColor: '#f0f4f8',
+                color: color,
+                // border: '1px solid #ccc',
+            }}
+        >
+            {tag.value}
+        </span>
+    );
 
     return (
         <div className="p-4 bg-white">
             <h3 className="text-lg font-semibold mb-2 text-black">{title}</h3>
-            <div style={{ width: '100%', height: '400px' }}>
-                <WordCloud words={wordData} options={options} />
-            </div>
+            <TagCloud
+                minSize={10}
+                maxSize={24}
+                tags={wordData}
+                className="text-black"
+                colorOptions={{ hue: 'blue' }}
+                renderer={customRenderer}
+            />
         </div>
     );
 }
