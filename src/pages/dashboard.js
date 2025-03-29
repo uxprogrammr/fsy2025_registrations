@@ -14,7 +14,8 @@ export default function Dashboard() {
         weekly_registration_growth: [],
         stake_participants: [],
         unit_participants: [],
-        medical_information: []
+        medical_information: [],
+        dietary_information: []
     });
 
     const [selectedStake, setSelectedStake] = useState("All Stakes");
@@ -240,6 +241,12 @@ export default function Dashboard() {
                     <WordCloudChart
                         words={data.medical_information.map(item => item.medical_information)}
                         title="Medical Information"
+                    />
+                </div>
+                <div className="grid grid-cols-1 gap-4 mb-6">
+                    <WordCloudChart
+                        words={data.dietary_information.map(item => item.dietary_information)}
+                        title="Dietary Information"
                     />
                 </div>
             </main>
