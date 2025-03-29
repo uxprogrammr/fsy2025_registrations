@@ -25,6 +25,7 @@ export default async function handler(req, res) {
         const stake_participants_result = await query("CALL stake_participation(?)", [participant_type]);
         const unit_participants_result = await query("CALL stake_unit_participation(?, ?)", [participant_type, stake_name]);
         const medical_information_result = await query("CALL medical_information(?, ?)", [participant_type, stake_name]);
+        const dietary_information_result = await query("CALL dietary_information(?, ?)", [participant_type, stake_name]);
 
         res.status(200).json({
             age_distribution: age_distribution_result[0],
@@ -34,7 +35,8 @@ export default async function handler(req, res) {
             weekly_registration_growth: weekly_registration_growth[0],
             stake_participants: stake_participants_result[0],
             unit_participants: unit_participants_result[0],
-            medical_information: medical_information_result[0]
+            medical_information: medical_information_result[0],
+            dietary_information: dietary_information_result[0]
         });
 
     } catch (error) {
