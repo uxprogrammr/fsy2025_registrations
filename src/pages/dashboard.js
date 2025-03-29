@@ -18,7 +18,7 @@ export default function Dashboard() {
     const [selectedStake, setSelectedStake] = useState("All Stakes");
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-    const [participantType] = useState("Participant");
+    const [participantType, setParticipantType] = useState("Participant");
 
     const stakes = [
         "All Stakes",
@@ -26,6 +26,7 @@ export default function Dashboard() {
         "Kalibo Philippines Stake",
         "Pandan Philippines District",
         "Roxas Capiz Philippines Stake",
+        "Other Stakes/Districts"
     ];
 
     useEffect(() => {
@@ -79,6 +80,35 @@ export default function Dashboard() {
             {/* Right Content (70%) */}
             <main className="flex-1 p-6 overflow-y-auto bg-white">
                 <h1 className="text-3xl font-bold mb-6 text-gray-900">Dashboard</h1>
+
+                {/* ✅ Participant Type Selection */}
+                <div className="mb-6">
+                    <label className="text-lg font-semibold text-gray-700 mb-2">Select Participant Type:</label>
+                    <div className="flex items-center space-x-4">
+                        <label className="flex items-center text-gray-700">
+                            <input
+                                type="radio"
+                                name="participantType"
+                                value="Participant"
+                                checked={participantType === "Participant"}
+                                onChange={(e) => setParticipantType(e.target.value)}
+                                className="mr-2"
+                            />
+                            Participant
+                        </label>
+                        <label className="flex items-center text-gray-700">
+                            <input
+                                type="radio"
+                                name="participantType"
+                                value="Counselor"
+                                checked={participantType === "Counselor"}
+                                onChange={(e) => setParticipantType(e.target.value)}
+                                className="mr-2"
+                            />
+                            Counselor
+                        </label>
+                    </div>
+                </div>
 
                 {selectedStake != "All Stakes" ? (
                     <div>
