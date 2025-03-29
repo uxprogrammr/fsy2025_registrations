@@ -134,6 +134,7 @@ export default function Dashboard() {
                             dataName="stake_name"
                             dataKey="total_registrants"
                             title="Stake Participants"
+                            total={data.stake_participants.reduce((acc, item) => acc + item.total_registrants, 0)}
                             xAxisLabel="Stake Name"
                             yAxisLabel="Total Registrants"
                             showGrid={false}
@@ -150,7 +151,7 @@ export default function Dashboard() {
                     <div className="col-span-3">
                         <BarGraph
                             data={data.age_distribution}
-                            dataName="youth"
+                            dataName="age_group"
                             dataKey="total_registrants"
                             title="Age Distribution"
                             xAxisLabel="Youth"
