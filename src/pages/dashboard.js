@@ -181,6 +181,24 @@ export default function Dashboard() {
                     </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
+                    <div className="col-span-2">
+                        <LineGraph
+                            data={data.weekly_registration_growth}
+                            dataName="fsy_week_number"
+                            dataKey="total_registrations"
+                            title="Weekly Registration Growth"
+                            lineColor="#3498db"
+                            showGrid={false}
+                            showLegend={false}
+                            showLabels={true}
+                            showXAxisLabel={false}
+                            lineType="linear"
+                            graphWidth="100%"
+                            graphHeight={300}
+                        />
+                    </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
                     <div className="col-span-1">
                         <BarGraph
                             data={data.registration_status_breakdown}
@@ -199,19 +217,20 @@ export default function Dashboard() {
                         />
                     </div>
                     <div className="col-span-1">
-                        <LineGraph
-                            data={data.weekly_registration_growth}
-                            dataName="fsy_week_number"
-                            dataKey="total_registrations"
-                            title="Weekly Registration Growth"
-                            lineColor="#3498db"
+                        <BarGraph
+                            data={data.shirt_size_distribution}
+                            dataName="shirt_size"
+                            dataKey="total_registrants"
+                            title="T-Shirt Size Distribution"
+                            xAxisLabel="Shirt Size"
+                            yAxisLabel="Total Registrants"
                             showGrid={false}
                             showLegend={false}
                             showLabels={true}
                             showXAxisLabel={false}
-                            lineType="linear"
+                            showYAxisLabel={true}
+                            barColor="#3498db"
                             graphWidth="100%"
-                            graphHeight={300}
                         />
                     </div>
                 </div>
