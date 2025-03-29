@@ -9,6 +9,7 @@ export function LineGraph({
     showGrid = true, // ✅ Toggle grid display
     showLegend = true, // ✅ Toggle legend
     showLabels = true, // ✅ Show/hide data labels
+    yAxisMax = null,
     xAxisLabel = "X-Axis",
     yAxisLabel = "Y-Axis",
     showXAxisLabel = true,
@@ -17,6 +18,9 @@ export function LineGraph({
     graphWidth = "100%", // ✅ Custom graph width
     graphHeight = 300, // ✅ Custom graph height
 }) {
+
+    const calculatedMax = yAxisMax || Math.ceil(Math.max(...data.map(item => item[dataKey])) * 1.2);
+
     return (
         <div className="p-4 bg-white">
             <h3 className="text-lg font-semibold mb-2 text-black">{title}</h3>
@@ -30,7 +34,7 @@ export function LineGraph({
                         {showXAxisLabel && <Label value={xAxisLabel} offset={-5} position="insideBottom" />}
                     </XAxis>
 
-                    <YAxis>
+                    <YAxis domain={[0, calculatedMax]}>
                         {showYAxisLabel && <Label value={yAxisLabel} angle={-90} position="insideLeft" />}
                     </YAxis>
 
@@ -61,6 +65,7 @@ export function BarGraph({
     barWidth = 50,
     xAxisLabel = "X-Axis",
     yAxisLabel = "Y-Axis",
+    yAxisMax = null,
     showGrid = true,
     showLegend = true,
     showLabels = false,
@@ -70,11 +75,13 @@ export function BarGraph({
     graphWidth = "100%",
 }) {
 
+    const calculatedMax = yAxisMax || Math.ceil(Math.max(...data.map(item => item[dataKey])) * 1.4);
+
     return (
         <div className="p-4 bg-white rounded-lg">
             <h3 className="text-lg font-semibold mb-2">{title}</h3>
             <ResponsiveContainer width={graphWidth} height={300}>
-                <BarChart data={data}>
+                <BarChart data={data} margin={{ top: 50, right: 40, left: 20 }}>
                     {/* Toggle Grid */}
                     {showGrid && <CartesianGrid strokeDasharray="3 3" />}
 
@@ -86,7 +93,7 @@ export function BarGraph({
                     </XAxis>
 
                     {/* Y Axis */}
-                    <YAxis>
+                    <YAxis domain={[0, calculatedMax]}>
                         {showYAxisLabel && <Label value={yAxisLabel} angle={-90} position="insideLeft" />}
                     </YAxis>
 
