@@ -61,6 +61,7 @@ export function BarGraph({
     data,
     dataKey,
     title,
+    total,
     dataName,
     barWidth = 50,
     xAxisLabel = "X-Axis",
@@ -75,11 +76,17 @@ export function BarGraph({
     graphWidth = "100%",
 }) {
 
+    const calculatedTotal = total ?? data.reduce((acc, item) => acc + item[dataKey], 0);
     const calculatedMax = yAxisMax || Math.ceil(Math.max(...data.map(item => item[dataKey])) * 1.4);
 
     return (
         <div className="p-4 bg-white rounded-lg">
-            <h3 className="text-lg font-semibold mb-2">{title}</h3>
+            <div className="flex justify-between items-center mb-2">
+                <h3 className="text-lg font-semibold text-black">{title}</h3>
+                <span className="text-white bg-blue-400 px-3 py-1 rounded-full text-sm font-bold">
+                    Total: {calculatedTotal}
+                </span>
+            </div>
             <ResponsiveContainer width={graphWidth} height={300}>
                 <BarChart data={data} margin={{ top: 50, right: 40, left: 20 }}>
                     {/* Toggle Grid */}
