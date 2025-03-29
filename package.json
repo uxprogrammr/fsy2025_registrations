@@ -4,10 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "npm install --legacy-peer-deps && next build",
     "start": "next start",
-    "lint": "next lint",
-    "postinstall": "npm install --legacy-peer-deps"
+    "lint": "next lint"
   },
   "dependencies": {
     "d3": "^7.9.0",
@@ -16,7 +15,7 @@
     "next": "15.1.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-wordcloud": "^1.2.7",
+    "react-tagcloud": "^2.3.3",
     "recharts": "^2.15.1"
   },
   "devDependencies": {
