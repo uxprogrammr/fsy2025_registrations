@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { LineGraph, BarGraph, PieGraph } from "@/components/Charts";
+import { WordCloudChart } from "@/components/WordCloud";
 import '@/app/globals.css';
 import { Menu, X } from "lucide-react";
 
@@ -13,6 +14,7 @@ export default function Dashboard() {
         weekly_registration_growth: [],
         stake_participants: [],
         unit_participants: [],
+        medical_information: []
     });
 
     const [selectedStake, setSelectedStake] = useState("All Stakes");
@@ -233,6 +235,12 @@ export default function Dashboard() {
                             graphWidth="100%"
                         />
                     </div>
+                </div>
+                <div className="grid grid-cols-1 gap-4 mb-6">
+                    <WordCloudChart
+                        words={data.medical_information.map(item => item.medical_information)}
+                        title="Medical Information"
+                    />
                 </div>
             </main>
 
