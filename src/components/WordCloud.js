@@ -37,8 +37,8 @@ export function WordCloudChart({ words, title }) {
         <div className="p-4 bg-white">
             <h3 className="text-lg font-semibold mb-2 text-black">{title}</h3>
             <TagCloud
-                minSize={10}
-                maxSize={24}
+                minSize={14}
+                maxSize={30}
                 tags={wordData}
                 className="text-black"
                 colorOptions={{ hue: 'blue' }}
