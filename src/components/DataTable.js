@@ -11,26 +11,26 @@ export function DataTable({ data, getMenuItems }) {
 
     return (
         <div className="overflow-auto rounded-lg shadow">
-            <table className="min-w-full bg-white border border-gray-200">
+            <table className="min-w-full bg-white border border-gray-200 text-sm">
                 <thead className="bg-gray-800 text-white">
                     <tr>
                         {headers.map((header) => (
-                            <th key={header} className="py-2 px-4 text-left">
+                            <th key={header} className="py-1 px-2 text-left font-medium">
                                 {header.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())}
                             </th>
                         ))}
-                        <th className="py-2 px-4 text-left">Actions</th>
+                        <th className="py-1 px-2 text-left font-medium">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {data.map((item, index) => (
                         <tr key={index} className="border-t bg-gray-50 hover:bg-gray-100 text-gray-800">
                             {headers.map((header) => (
-                                <td key={header} className="py-2 px-4">
+                                <td key={header} className="py-1 px-2">
                                     {item[header]}
                                 </td>
                             ))}
-                            <td className="py-2 px-4">
+                            <td className="py-1 px-2">
                                 <EllipsisMenu items={getMenuItems(item)} />
                             </td>
                         </tr>

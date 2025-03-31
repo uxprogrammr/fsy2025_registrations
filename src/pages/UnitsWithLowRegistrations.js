@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DataTable from "@/components/DataTable";
 import ReminderModal from "@/components/ReminderModal";
+import RegistrantModal from "@/components/RegistrantModal";
 import '@/styles/global.css';
 
 export default function UnitsWithLowRegistrations() {
@@ -8,6 +9,8 @@ export default function UnitsWithLowRegistrations() {
     const [participantType, setParticipantType] = useState("Participant");
     const [selectedRow, setSelectedRow] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isRegistrantModalOpen, setIsRegistrantModalOpen] = useState(false);
+    const [registrantData, setRegistrantData] = useState([]);
 
     const getMenuItems = (item) => [
         {
@@ -16,13 +19,25 @@ export default function UnitsWithLowRegistrations() {
         },
         {
             label: "View Registrations",
-            action: () => console.log("View Registrations for", item.unit_name),
+            action: () => handleViewRegistrants(participantType, item), // Handle the registration view
         }
     ];
 
     const handleSendReminder = (item) => {
         setSelectedRow(item);
         setIsModalOpen(true);
+    };
+
+    const handleViewRegistrants = async (participantType, item) => {
+        try {
+            const response = await fetch(`/api/get_registrants_by_unit?participant_type=${participantType}&unit_name=${item.unit_name}`);
+            const result = await response.json();
+            setRegistrantData(result.data); // Update with fetched registrants
+            setSelectedRow(item);
+            setIsRegistrantModalOpen(true); // Open the registrant modal
+        } catch (error) {
+            console.error("Error fetching registrants:", error);
+        }
     };
 
     useEffect(() => {
@@ -84,6 +99,14 @@ export default function UnitsWithLowRegistrations() {
                     leaderName={selectedRow.leader_name}
                     leaderPhone={selectedRow.leader_phone}
                     leaderEmail={selectedRow.leader_email}
+                />
+            )}
+
+            {isRegistrantModalOpen && (
+                <RegistrantModal
+                    isOpen={isRegistrantModalOpen}
+                    onClose={() => setIsRegistrantModalOpen(false)}
+                    registrants={registrantData}
                 />
             )}
         </main>

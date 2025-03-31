@@ -6,6 +6,40 @@ export default function ReminderModal({ isOpen, onClose, stakeName, unitName, le
 
     if (!isOpen) return null;
 
+    const handleSendMessage = async () => {
+        if (reminderType === "text") {
+            try {
+                const formattedPhoneNumber = leaderPhone.replace(/\s+/g, '');
+
+                const response = await fetch("/api/send-sms", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        phoneNumber: formattedPhoneNumber,
+                        message,
+                    }),
+                });
+
+                const result = await response.json();
+                console.log("SMS response:", result);
+                if (result.success) {
+                    alert("Message sent successfully!");
+                    onClose();
+                } else {
+                    alert("Failed to send message: " + result.error);
+                }
+            } catch (error) {
+                console.error("Error sending message:", error);
+                alert("Error sending message.");
+            }
+        } else {
+            alert("Email sending is not yet configured.");
+        }
+    };
+
+
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white p-6 rounded-lg shadow-lg w-[500px]">
@@ -61,7 +95,7 @@ export default function ReminderModal({ isOpen, onClose, stakeName, unitName, le
                 <div className="flex justify-end gap-2">
                     <button
                         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                        onClick={() => alert(`Reminder sent via ${reminderType.toUpperCase()}`)}
+                        onClick={handleSendMessage}
                     >
                         Send Message
                     </button>
