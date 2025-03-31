@@ -79,6 +79,21 @@ export function BarGraph({
     const calculatedTotal = total ?? data.reduce((acc, item) => acc + item[dataKey], 0);
     const calculatedMax = yAxisMax || Math.ceil(Math.max(...data.map(item => item[dataKey])) * 1.4);
 
+    // Automated insight generation
+    const highestValue = Math.max(...data.map(item => item[dataKey]));
+    const lowestValue = Math.min(...data.map(item => item[dataKey]));
+    const mostCommon = data.reduce((prev, current) => (prev[dataKey] > current[dataKey] ? prev : current), {});
+    const leastCommon = data.reduce((prev, current) => (prev[dataKey] < current[dataKey] ? prev : current), {});
+
+    // Generate insight text
+    const insightText = `
+        The highest value is ${highestValue}, observed in ${mostCommon[dataName]}.
+        The lowest value is ${lowestValue}, observed in ${leastCommon[dataName]}.
+        The total number of registrants is ${calculatedTotal}.
+        ${highestValue > calculatedTotal * 0.4 ? "Action: Consider focusing more resources on " + mostCommon[dataName] + "." : ""}
+        ${lowestValue < calculatedTotal * 0.1 ? "Note: " + leastCommon[dataName] + " has significantly fewer participants." : ""}
+    `;
+
     return (
         <div className="p-4 bg-white rounded-lg">
             <div className="flex justify-between items-center mb-2">
@@ -89,37 +104,27 @@ export function BarGraph({
             </div>
             <ResponsiveContainer width={graphWidth} height={300}>
                 <BarChart data={data} margin={{ top: 50, right: 40, left: 20 }}>
-                    {/* Toggle Grid */}
                     {showGrid && <CartesianGrid strokeDasharray="3 3" />}
-
-                    {/* X Axis */}
-                    <XAxis dataKey={dataName}
-                        tick={{ fontSize: 14 }}
-                        interval={0}  >
+                    <XAxis dataKey={dataName} tick={{ fontSize: 14 }} interval={0}>
                         {showXAxisLabel && <Label value={xAxisLabel} offset={-5} position="insideBottom" />}
                     </XAxis>
-
-                    {/* Y Axis */}
                     <YAxis domain={[0, calculatedMax]}>
                         {showYAxisLabel && <Label value={yAxisLabel} angle={-90} position="insideLeft" />}
                     </YAxis>
-
-                    {/* Tooltip */}
-                    {/* <Tooltip /> */}
-
-                    {/* Toggle Legend */}
                     {showLegend && <Legend />}
-
-                    {/* Bar Graph */}
                     <Bar dataKey={dataKey} fill={barColor} barSize={barWidth}>
-                        {/* Toggle Data Labels */}
                         {showLabels && <LabelList dataKey={dataKey} position="top" />}
                     </Bar>
                 </BarChart>
             </ResponsiveContainer>
+            {/* Insight Section */}
+            <div className="mt-4 p-2 bg-gray-100 rounded-md text-sm text-gray-700">
+                <p><strong>Insight:</strong> {insightText}</p>
+            </div>
         </div>
     );
 }
+
 
 export function PieGraph({
     data,
