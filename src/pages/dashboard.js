@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import { LineGraph, BarGraph, PieGraph } from "@/components/Charts";
 import { WordCloudChart } from "@/components/WordCloud";
-import '@/app/globals.css';
-import { Menu, X } from "lucide-react";
+import '@/styles/global.css';
 
-
-export default function Dashboard() {
+export default function Dashboard({ selectedStake, participantType, setParticipantType }) {
     const [data, setData] = useState({
         age_distribution: [],
         gender_distribution: [],
@@ -17,20 +15,6 @@ export default function Dashboard() {
         medical_information: [],
         dietary_information: []
     });
-
-    const [selectedStake, setSelectedStake] = useState("All Stakes");
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-
-    const [participantType, setParticipantType] = useState("Participant");
-
-    const stakes = [
-        "All Stakes",
-        "Antique Philippines District",
-        "Kalibo Philippines Stake",
-        "Pandan Philippines District",
-        "Roxas Capiz Philippines Stake",
-        "Other Stakes/Districts"
-    ];
 
     useEffect(() => {
         async function fetchData() {
@@ -45,213 +29,174 @@ export default function Dashboard() {
             }
         }
         fetchData();
-    }, [participantType, selectedStake]); // Re-fetch data when parameters change
+    }, [participantType, selectedStake]);
 
     return (
-        <div className="flex flex-row h-screen"> {/* ✅ flex-row ensures left-right layout */}
-            <aside className={`bg-white shadow-lg p-4 transition-all duration-300 ${isSidebarOpen ? "w-64" : "w-20"} overflow-hidden`}>
-                {/* Sidebar Toggle Button */}
-                <button
-                    className="mb-4 p-2 bg-gray-200 rounded-lg flex items-center justify-center"
-                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                >
-                    {isSidebarOpen ? <X size={24} className="text-black" /> : <Menu size={24} className="text-black" />}
-                </button>
+        <main className="flex-1 p-6 overflow-y-auto bg-white">
+            <h1 className="text-3xl font-bold mb-6 text-gray-900">Dashboard</h1>
 
-                <h2 className={`text-xl font-bold mb-4 text-black transition-opacity duration-300 ${isSidebarOpen ? "opacity-100" : "opacity-0 hidden"}`}>
-                    Filter by Stake
-                </h2>
-
-                <ul className="space-y-2">
-                    {stakes.map((stake) => {
-                        const firstWord = stake.split(" ")[0]; // ✅ Extract first word
-                        return (
-                            <li key={stake}>
-                                <button
-                                    onClick={() => setSelectedStake(stake)}
-                                    className={`w-full text-left p-2 rounded-lg text-black ${selectedStake === stake ? "bg-blue-500 text-white" : "bg-gray-200 hover:bg-gray-300"}`}
-                                >
-                                    {/* ✅ Show full name when expanded, first word when collapsed */}
-                                    {isSidebarOpen ? stake : firstWord}
-                                </button>
-                            </li>
-                        );
-                    })}
-                </ul>
-            </aside>
-
-            {/* Right Content (70%) */}
-            <main className="flex-1 p-6 overflow-y-auto bg-white">
-                <h1 className="text-3xl font-bold mb-6 text-gray-900">Dashboard</h1>
-
-                {/* ✅ Participant Type Selection */}
-                <div className="mb-6">
-                    <label className="text-lg font-semibold text-gray-700 mb-2">Select Participant Type:</label>
-                    <div className="flex items-center space-x-4">
-                        <label className="flex items-center text-gray-700">
-                            <input
-                                type="radio"
-                                name="participantType"
-                                value="Participant"
-                                checked={participantType === "Participant"}
-                                onChange={(e) => setParticipantType(e.target.value)}
-                                className="mr-2"
-                            />
-                            Participant
-                        </label>
-                        <label className="flex items-center text-gray-700">
-                            <input
-                                type="radio"
-                                name="participantType"
-                                value="Counselor"
-                                checked={participantType === "Counselor"}
-                                onChange={(e) => setParticipantType(e.target.value)}
-                                className="mr-2"
-                            />
-                            Counselor
-                        </label>
-                    </div>
+            <div className="mb-6">
+                <label className="text-lg font-semibold text-gray-700 mb-2">Select Participant Type:</label>
+                <div className="flex items-center space-x-4">
+                    <label className="flex items-center text-gray-700">
+                        <input
+                            type="radio"
+                            name="participantType"
+                            value="Participant"
+                            checked={participantType === "Participant"}
+                            onChange={(e) => setParticipantType(e.target.value)}
+                            className="mr-2"
+                        />
+                        Participant
+                    </label>
+                    <label className="flex items-center text-gray-700">
+                        <input
+                            type="radio"
+                            name="participantType"
+                            value="Counselor"
+                            checked={participantType === "Counselor"}
+                            onChange={(e) => setParticipantType(e.target.value)}
+                            className="mr-2"
+                        />
+                        Counselor
+                    </label>
                 </div>
+            </div>
 
-                {selectedStake != "All Stakes" ? (
-                    <div>
-                        <BarGraph
-                            data={data.unit_participants}
-                            dataName="unit_name"
-                            dataKey="total_registrants"
-                            title={`${selectedStake} Participants`}
-                            xAxisLabel="Unit Name"
-                            yAxisLabel="Total Registrants"
-                            showGrid={false}
-                            showLegend={false}
-                            showLabels={true}
-                            showXAxisLabel={false}
-                            showYAxisLabel={true}
-                            barColor="#3498db"
-                        />
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 gap-6 mb-6">
-                        <BarGraph
-                            data={data.stake_participants}
-                            dataName="stake_name"
-                            dataKey="total_registrants"
-                            title="Stake Participants"
-                            total={data.stake_participants.reduce((acc, item) => acc + item.total_registrants, 0)}
-                            xAxisLabel="Stake Name"
-                            yAxisLabel="Total Registrants"
-                            showGrid={false}
-                            showLegend={false}
-                            showLabels={true}
-                            showXAxisLabel={false}
-                            showYAxisLabel={true}
-                            barColor="#3498db"
-                        />
-                    </div>
-                )}
-
-                <div className="grid grid-cols-5 gap-4">
-                    <div className="col-span-3">
-                        <BarGraph
-                            data={data.age_distribution}
-                            dataName="age_group"
-                            dataKey="total_registrants"
-                            title="Age Distribution"
-                            xAxisLabel="Youth"
-                            yAxisLabel="Total Registrants"
-                            showGrid={false}
-                            showLegend={false}
-                            showLabels={true}
-                            showXAxisLabel={false}
-                            showYAxisLabel={true}
-                            barColor="#3498db"
-                            graphWidth="100%"
-                        />
-                    </div>
-                    <div className="col-span-2">
-                        <PieGraph
-                            data={data.gender_distribution}
-                            dataKey="total_registrants"
-                            dataName="gender"
-                            title="Gender Distribution"
-                            colors={["#3498db", "#e74c3c"]}
-                            showLegend={true}
-                            showLabels={true}
-                            outerRadius={120}
-                            graphWidth="100%"
-                            graphHeight={400}
-                        />
-                    </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="col-span-2">
-                        <LineGraph
-                            data={data.weekly_registration_growth}
-                            dataName="fsy_week_number"
-                            dataKey="total_registrations"
-                            title="Weekly Registration Growth"
-                            lineColor="#3498db"
-                            showGrid={false}
-                            showLegend={false}
-                            showLabels={true}
-                            showXAxisLabel={false}
-                            lineType="linear"
-                            graphWidth="100%"
-                            graphHeight={300}
-                        />
-                    </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="col-span-1">
-                        <BarGraph
-                            data={data.registration_status_breakdown}
-                            dataName="status"
-                            dataKey="total_registrants"
-                            title="Registration Status Breakdown"
-                            xAxisLabel="Status"
-                            yAxisLabel="Total Registrants"
-                            showGrid={false}
-                            showLegend={false}
-                            showLabels={true}
-                            showXAxisLabel={false}
-                            showYAxisLabel={true}
-                            barColor="#3498db"
-                            graphWidth="100%"
-                        />
-                    </div>
-                    <div className="col-span-1">
-                        <BarGraph
-                            data={data.shirt_size_distribution}
-                            dataName="shirt_size"
-                            dataKey="total_registrants"
-                            title="T-Shirt Size Distribution"
-                            xAxisLabel="Shirt Size"
-                            yAxisLabel="Total Registrants"
-                            showGrid={false}
-                            showLegend={false}
-                            showLabels={true}
-                            showXAxisLabel={false}
-                            showYAxisLabel={true}
-                            barColor="#3498db"
-                            graphWidth="100%"
-                        />
-                    </div>
-                </div>
-                <div className="grid grid-cols-1 gap-4 mb-6">
-                    <WordCloudChart
-                        words={data.medical_information.map(item => item.medical_information)}
-                        title="Medical Information"
+            {selectedStake !== "All Stakes" ? (
+                <BarGraph
+                    data={data.unit_participants}
+                    dataName="unit_name"
+                    dataKey="total_registrants"
+                    title={`${selectedStake} Participants`}
+                    xAxisLabel="Unit Name"
+                    yAxisLabel="Total Registrants"
+                    showGrid={false}
+                    showLegend={false}
+                    showLabels={true}
+                    showXAxisLabel={false}
+                    showYAxisLabel={true}
+                    barColor="#3498db"
+                />
+            ) : (
+                <div className="grid grid-cols-1 gap-6 mb-6">
+                    <BarGraph
+                        data={data.stake_participants}
+                        dataName="stake_name"
+                        dataKey="total_registrants"
+                        title="Stake Participants"
+                        xAxisLabel="Stake Name"
+                        yAxisLabel="Total Registrants"
+                        showGrid={false}
+                        showLegend={false}
+                        showLabels={true}
+                        showXAxisLabel={false}
+                        showYAxisLabel={true}
+                        barColor="#3498db"
                     />
                 </div>
-                <div className="grid grid-cols-1 gap-4 mb-6">
-                    <WordCloudChart
-                        words={data.dietary_information.map(item => item.dietary_information)}
-                        title="Dietary Information"
+            )}
+
+            <div className="grid grid-cols-5 gap-4">
+                <div className="col-span-3">
+                    <BarGraph
+                        data={data.age_distribution}
+                        dataName="age_group"
+                        dataKey="total_registrants"
+                        title="Age Distribution"
+                        xAxisLabel="Youth"
+                        yAxisLabel="Total Registrants"
+                        showGrid={false}
+                        showLegend={false}
+                        showLabels={true}
+                        showXAxisLabel={false}
+                        showYAxisLabel={true}
+                        barColor="#3498db"
+                        graphWidth="100%"
                     />
                 </div>
-            </main>
+                <div className="col-span-2">
+                    <PieGraph
+                        data={data.gender_distribution}
+                        dataKey="total_registrants"
+                        dataName="gender"
+                        title="Gender Distribution"
+                        colors={["#3498db", "#e74c3c"]}
+                        showLegend={true}
+                        showLabels={true}
+                        outerRadius={120}
+                        graphWidth="100%"
+                        graphHeight={400}
+                    />
+                </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2">
+                    <LineGraph
+                        data={data.weekly_registration_growth}
+                        dataName="fsy_week_number"
+                        dataKey="total_registrations"
+                        title="Weekly Registration Growth"
+                        lineColor="#3498db"
+                        showGrid={false}
+                        showLegend={false}
+                        showLabels={true}
+                        showXAxisLabel={false}
+                        lineType="linear"
+                        graphWidth="100%"
+                        graphHeight={300}
+                    />
+                </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-1">
+                    <BarGraph
+                        data={data.registration_status_breakdown}
+                        dataName="status"
+                        dataKey="total_registrants"
+                        title="Registration Status Breakdown"
+                        xAxisLabel="Status"
+                        yAxisLabel="Total Registrants"
+                        showGrid={false}
+                        showLegend={false}
+                        showLabels={true}
+                        showXAxisLabel={false}
+                        showYAxisLabel={true}
+                        barColor="#3498db"
+                        graphWidth="100%"
+                    />
+                </div>
+                <div className="col-span-1">
+                    <BarGraph
+                        data={data.shirt_size_distribution}
+                        dataName="shirt_size"
+                        dataKey="total_registrants"
+                        title="T-Shirt Size Distribution"
+                        xAxisLabel="Shirt Size"
+                        yAxisLabel="Total Registrants"
+                        showGrid={false}
+                        showLegend={false}
+                        showLabels={true}
+                        showXAxisLabel={false}
+                        showYAxisLabel={true}
+                        barColor="#3498db"
+                        graphWidth="100%"
+                    />
+                </div>
+            </div>
 
-
-        </div>
+            <div className="grid grid-cols-1 gap-4 mb-6">
+                <WordCloudChart
+                    words={data.medical_information.map(item => item.medical_information)}
+                    title="Medical Information"
+                />
+            </div>
+            <div className="grid grid-cols-1 gap-4 mb-6">
+                <WordCloudChart
+                    words={data.dietary_information.map(item => item.dietary_information)}
+                    title="Dietary Information"
+                />
+            </div>
+        </main>
     );
 }
