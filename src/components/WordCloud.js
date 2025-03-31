@@ -1,5 +1,4 @@
 import React from 'react';
-import { TagCloud } from 'react-tagcloud';
 
 export function WordCloudChart({ words, title }) {
     // Prepare words for the cloud
@@ -13,37 +12,31 @@ export function WordCloudChart({ words, title }) {
         return acc;
     }, []);
 
-    // Custom renderer for words to add separation and style
-    const customRenderer = (tag, size, color) => (
-        <span
-            key={tag.value}
-            style={{
-                margin: '5px',
-                padding: '5px 8px',
-                display: 'inline-block',
-                fontSize: `${size}px`,
-                fontWeight: 'bold',
-                borderRadius: '8px',
-                backgroundColor: '#f0f4f8',
-                color: color,
-                // border: '1px solid #ccc',
-            }}
-        >
-            {tag.value}
-        </span>
-    );
+    // Generate a random font size between 14 and 30
+    const getRandomFontSize = () => Math.floor(Math.random() * (24 - 14 + 1)) + 14;
 
     return (
         <div className="p-4 bg-white">
             <h3 className="text-lg font-semibold mb-2 text-black">{title}</h3>
-            <TagCloud
-                minSize={14}
-                maxSize={30}
-                tags={wordData}
-                className="text-black"
-                colorOptions={{ hue: 'blue' }}
-                renderer={customRenderer}
-            />
+            <div className="flex flex-wrap">
+                {wordData.map((tag, index) => (
+                    <span
+                        key={index}
+                        style={{
+                            margin: '5px',
+                            padding: '5px 8px',
+                            display: 'inline-block',
+                            fontSize: `${getRandomFontSize()}px`,
+                            fontWeight: 'bold',
+                            borderRadius: '8px',
+                            backgroundColor: '#f0f4f8',
+                            color: '#3498db',
+                        }}
+                    >
+                        {tag.value} ({tag.count})
+                    </span>
+                ))}
+            </div>
         </div>
     );
 }
