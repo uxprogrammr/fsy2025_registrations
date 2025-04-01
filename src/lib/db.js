@@ -17,11 +17,17 @@ export async function query(sql, params = []) {
     try {
         const [results] = await pool.execute(sql, params);
 
-        if (!Array.isArray(results)) {
-            throw new Error("Database query did not return an array");
+        // Check if results are an array (SELECT queries)
+        if (Array.isArray(results)) {
+            return results;
         }
 
-        return results;
+        // For INSERT, UPDATE, or DELETE, return the result object directly
+        if (typeof results === "object") {
+            return results;
+        }
+
+        throw new Error("Unexpected query result format");
     } catch (error) {
         console.error("Database query error:", error);
         return [];

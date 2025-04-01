@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import DataTable from "@/components/DataTable";
+import SignOutButton from '@/components/SignOutButton';
+import UserInfo from "../components/UserInfo";
 import '@/styles/global.css';
 
 export default function UnitsWithWaitingApproval() {
@@ -31,7 +33,11 @@ export default function UnitsWithWaitingApproval() {
     }, [participantType]);
 
     return (
-        <main className="flex-1 p-6 overflow-y-auto bg-white">
+        <main className="flex-1 p-2 overflow-y-auto bg-white">
+            <div className="flex justify-between items-center mb-4">
+                <UserInfo />
+                <SignOutButton />
+            </div>
             <h1 className="text-3xl font-bold mb-6 text-gray-900">Units with Waiting Approval</h1>
 
             {/* Participant Type Selection */}

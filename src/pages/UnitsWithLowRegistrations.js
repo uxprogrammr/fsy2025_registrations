@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import DataTable from "@/components/DataTable";
 import ReminderModal from "@/components/ReminderModal";
 import RegistrantModal from "@/components/RegistrantModal";
+import SignOutButton from '@/components/SignOutButton';
+import UserInfo from "../components/UserInfo";
 import '@/styles/global.css';
 
 export default function UnitsWithLowRegistrations() {
@@ -54,7 +56,11 @@ export default function UnitsWithLowRegistrations() {
     }, [participantType]);
 
     return (
-        <main className="flex-1 p-6 overflow-y-auto bg-white">
+        <main className="flex-1 p-2 overflow-y-auto bg-white">
+            <div className="flex justify-between items-center mb-4">
+                <UserInfo />
+                <SignOutButton />
+            </div>
             <h1 className="text-3xl font-bold mb-6 text-gray-900">Units with Low Registrations</h1>
 
             {/* Participant Type Selection */}
