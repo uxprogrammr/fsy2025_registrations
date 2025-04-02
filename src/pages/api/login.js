@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import { query } from '@/lib/db';
 
@@ -12,18 +13,24 @@ export default async function handler(req, res) {
 
         try {
             // Admin login: Verify email and password
-            const result = await query('SELECT * FROM users WHERE email = ? or phone_number =?', [username, username]);
+            const result = await query('SELECT * FROM users WHERE user_type = "Coordinator" and (email = ? or phone_number =?)', [username, username]);
 
             if (result.length === 0) {
                 return res.status(401).json({ success: false, message: 'Invalid email or password' });
             }
 
             const user = result[0];
-            const passwordMatch = await bcrypt.compare(password, user.password_hash);
 
-            if (!passwordMatch) {
+            const hashPassword = (password) => {
+                return crypto.createHash('sha256').update(password).digest('hex');
+            };
+
+            const hashedInputPassword = hashPassword(password);
+
+            if (user.password_hash !== hashedInputPassword) {
                 return res.status(401).json({ success: false, message: 'Invalid email or password' });
             }
+
 
             // Generate JWT token for Admin
             const token = jwt.sign({ userId: user.user_id, userType: user.user_type, fullName: user.full_name }, process.env.JWT_SECRET, {
