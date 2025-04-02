@@ -58,7 +58,6 @@ export default function ParticipantProfile() {
     }, [participant]);
 
     const handleEdit = () => {
-        // Create a clean copy of the current data, preserving all fields
         const editableData = {
             first_name: participant.first_name,
             last_name: participant.last_name,
@@ -75,18 +74,16 @@ export default function ParticipantProfile() {
             mother_name: participant.mother_name,
             mother_email: participant.mother_email,
             mother_phone_number: participant.mother_phone_number,
-            stake_name: participant.stake_name,
-            unit_name: participant.unit_name,
-            bishop_name: participant.bishop_name,
-            bishop_email: participant.bishop_email,
             medical_information: participant.medical_information,
             dietary_information: participant.dietary_information
+            // Exclude Church Information fields here
         };
-
-        console.log('Starting edit mode with data:', editableData);
+    
         setEditedData(editableData);
         setIsEditing(true);
     };
+    
+    
 
     const handleCancel = () => {
         setEditedData({});
@@ -148,38 +145,72 @@ export default function ParticipantProfile() {
     const renderField = (label, field, type = 'text') => {
         const value = isEditing ? editedData[field] : participant[field];
     
-        if (isEditing && field === 'gender') {
+        // Render Gender as Radio Buttons
+        if (field === 'gender') {
+            if (isEditing) {
+                return (
+                    <div className="mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+                        <div className="flex gap-4 items-center">
+                            <label className="flex items-center space-x-2">
+                                <input
+                                    type="radio"
+                                    name="gender"
+                                    value="Male"
+                                    checked={value === 'Male'}
+                                    onChange={(e) => handleChange(field, e.target.value)}
+                                    className="form-radio text-blue-600 h-4 w-4"
+                                />
+                                <span className="text-gray-700">Male</span>
+                            </label>
+                            <label className="flex items-center space-x-2">
+                                <input
+                                    type="radio"
+                                    name="gender"
+                                    value="Female"
+                                    checked={value === 'Female'}
+                                    onChange={(e) => handleChange(field, e.target.value)}
+                                    className="form-radio text-blue-600 h-4 w-4"
+                                />
+                                <span className="text-gray-700">Female</span>
+                            </label>
+                        </div>
+                    </div>
+                );
+            } else {
+                // Display gender as text in view mode
+                return (
+                    <div className="mb-2">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+                        <div className="text-gray-900 px-3 py-2 bg-gray-50 border border-gray-300 rounded">
+                            {value || 'Not provided'}
+                        </div>
+                    </div>
+                );
+            }
+        }
+    
+        // Render T-Shirt Size as a ComboBox (Select)
+        if (isEditing && field === 'shirt_size') {
+            const shirtSizes = ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL"];
             return (
                 <div className="mb-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
-                    <div className="flex gap-4">
-                        <label className="flex items-center">
-                            <input
-                                type="radio"
-                                name="gender"
-                                value="Male"
-                                checked={value === 'Male'}
-                                onChange={(e) => handleChange(field, e.target.value)}
-                                className="mr-2"
-                            />
-                            <span className="text-gray-900">Male</span>
-                        </label>
-                        <label className="flex items-center">
-                            <input
-                                type="radio"
-                                name="gender"
-                                value="Female"
-                                checked={value === 'Female'}
-                                onChange={(e) => handleChange(field, e.target.value)}
-                                className="mr-2"
-                            />
-                            <span className="text-gray-900">Female</span>
-                        </label>
-                    </div>
+                    <select
+                        value={value || ''}
+                        onChange={(e) => handleChange(field, e.target.value)}
+                        className="w-full px-3 py-2 text-black bg-white border border-gray-300 rounded"
+                    >
+                        <option value="" disabled>Select T-Shirt Size</option>
+                        {shirtSizes.map((size) => (
+                            <option key={size} value={size}>{size}</option>
+                        ))}
+                    </select>
                 </div>
             );
         }
     
+        // Default field rendering
         return (
             <div className="mb-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -202,7 +233,7 @@ export default function ParticipantProfile() {
                         />
                     )
                 ) : (
-                    <div className="text-gray-900">
+                    <div className="text-gray-900 px-3 py-2 bg-gray-50 border border-gray-300 rounded">
                         {type === 'date' && value ? 
                             new Date(value).toLocaleDateString() : 
                             value || 'Not provided'}
@@ -211,6 +242,9 @@ export default function ParticipantProfile() {
             </div>
         );
     };
+    
+    
+
     
 
     const validateEmail = (email) => {
@@ -533,7 +567,7 @@ export default function ParticipantProfile() {
                             {/* Contact Information */}
                             <div className="p-6 border-b">
                                 <h2 className="text-xl font-semibold mb-4 text-gray-900">Contact Information</h2>
-                                <div className="space-y-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         {renderField('Phone Number', 'phone_number')}
                                     </div>
@@ -581,26 +615,40 @@ export default function ParticipantProfile() {
                             {/* Church Information */}
                             <div className="p-6 border-b">
                                 <h2 className="text-xl font-semibold mb-4">Church Information</h2>
-                                <div className="space-y-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        {renderField('Stake', 'stake_name')}
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Stake</label>
+                                        <div className="text-gray-900 px-3 py-2 bg-gray-50 border border-gray-300 rounded">
+                                            {participant?.stake_name || 'Not provided'}
+                                        </div>
                                     </div>
                                     <div>
-                                        {renderField('Unit', 'unit_name')} 
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Unit</label>
+                                        <div className="text-gray-900 px-3 py-2 bg-gray-50 border border-gray-300 rounded">
+                                            {participant?.unit_name || 'Not provided'}
+                                        </div>
                                     </div>
                                     <div>
-                                        {renderField('Bishop Name', 'bishop_name')}
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Bishop Name</label>
+                                        <div className="text-gray-900 px-3 py-2 bg-gray-50 border border-gray-300 rounded">
+                                            {participant?.bishop_name || 'Not provided'}
+                                        </div>
                                     </div>
                                     <div>
-                                        {renderField('Bishop Email', 'bishop_email')}
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Bishop Email</label>
+                                        <div className="text-gray-900 px-3 py-2 bg-gray-50 border border-gray-300 rounded">
+                                            {participant?.bishop_email || 'Not provided'}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
+
+
                             {/* Health Information */}
                             <div className="p-6 border-b">
                                 <h2 className="text-xl font-semibold mb-4">Health Information</h2>
-                                <div className="space-y-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         {renderField('Medical Information', 'medical_information')}
                                     </div>
