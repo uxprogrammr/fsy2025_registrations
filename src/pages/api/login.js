@@ -12,7 +12,7 @@ export default async function handler(req, res) {
 
         try {
             // Admin login: Verify email and password
-            const result = await query('SELECT * FROM users WHERE email = ?', [username]);
+            const result = await query('SELECT * FROM users WHERE email = ? or phone_number =?', [username, username]);
 
             if (result.length === 0) {
                 return res.status(401).json({ success: false, message: 'Invalid email or password' });

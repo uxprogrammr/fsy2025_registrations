@@ -15,12 +15,12 @@ export default async function handler(req, res) {
         try {
             // Verify the counselor details with the registration records
             const result = await query(
-                'SELECT * FROM registrations WHERE participant_type = "Counselor" AND (email = ? OR phone_number = ?) AND birth_date = ?',
+                'SELECT * FROM registrations WHERE participant_type = "Participant" AND (email = ? OR phone_number = ?) AND birth_date = ?',
                 [email, mobileNumber, formattedBirthDate]
             );
 
             if (result.length === 0) {
-                return res.status(401).json({ success: false, message: 'Counselor not found or details do not match' });
+                return res.status(401).json({ success: false, message: 'Participant not found or details do not match' });
             }
 
             // Check if the counselor already exists in the users table
@@ -30,7 +30,7 @@ export default async function handler(req, res) {
             );
 
             if (existingUser.length > 0) {
-                return res.status(409).json({ success: false, message: 'Counselor already registered' });
+                return res.status(409).json({ success: false, message: 'Participant already registered' });
             }
 
             // Hash the pin code
@@ -43,12 +43,12 @@ export default async function handler(req, res) {
             console.log('Executing SQL:', sqlQuery.replace(/\?/g, () => `'${sqlValues.shift()}'`));
 
             // Insert the counselor data into the users table
-            const insertResult = await query(sqlQuery, [fullName, email, mobileNumber, formattedBirthDate, hashedPin, 'Counselor']);
+            const insertResult = await query(sqlQuery, [fullName, email, mobileNumber, formattedBirthDate, hashedPin, 'Participant']);
 
             if (insertResult.affectedRows === 1) {
-                res.status(201).json({ success: true, message: 'Counselor registered successfully' });
+                res.status(201).json({ success: true, message: 'Participant registered successfully' });
             } else {
-                res.status(500).json({ success: false, message: 'Failed to register counselor' });
+                res.status(500).json({ success: false, message: 'Failed to register Participant' });
             }
         } catch (error) {
             console.error('Sign up error:', error);

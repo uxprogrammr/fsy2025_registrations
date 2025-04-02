@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { LineGraph, BarGraph, PieGraph } from "@/components/Charts";
 import { WordCloudChart } from "@/components/WordCloud";
 import ProtectedRoute from '@/components/ProtectedRoute';
-import SignOutButton from '@/components/SignOutButton';
-import UserInfo from "../components/UserInfo";
 import '@/styles/global.css';
 
 export default function Dashboard({ selectedStake, participantType, setParticipantType }) {
@@ -36,11 +34,7 @@ export default function Dashboard({ selectedStake, participantType, setParticipa
 
     return (
         <ProtectedRoute>
-            <main className="flex-1 p-2 overflow-y-auto bg-white">
-                <div className="flex justify-between items-center mb-4">
-                    <UserInfo />
-                    <SignOutButton />
-                </div>
+            <main className="flex-1 p-6 overflow-y-auto bg-white">
                 <h1 className="text-3xl font-bold mb-6 text-gray-900">Dashboard</h1>
 
                 <div className="mb-6">

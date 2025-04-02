@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import '@/styles/global.css';
 
-export default function CounselorSignUp() {
+export default function ParticipantSignUp() {
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [mobileNumber, setMobileNumber] = useState('');
@@ -29,7 +29,7 @@ export default function CounselorSignUp() {
         }
 
         try {
-            const response = await fetch('/api/counselor-signup', {
+            const response = await fetch('/api/participant-signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -40,7 +40,7 @@ export default function CounselorSignUp() {
 
             if (result.success) {
                 setSuccess('Account created successfully!');
-                //router.push('/login');
+                router.push('/login');
             } else {
                 setError(result.message);
             }
@@ -52,7 +52,7 @@ export default function CounselorSignUp() {
     return (
         <div className="flex items-center justify-center h-screen bg-gray-100">
             <div className="p-8 bg-white rounded shadow-md w-96">
-                <h2 className="text-2xl font-bold mb-6">Counselor Sign Up</h2>
+                <h2 className="text-2xl font-bold mb-6">Participant Sign Up</h2>
                 {error && <p className="text-red-500 mb-4">{error}</p>}
                 {success && <p className="text-green-500 mb-4">{success}</p>}
                 <input type="text" placeholder="Full Name" className="w-full p-2 mb-4 border rounded text-gray-900" value={fullName} onChange={(e) => setFullName(e.target.value)} />
