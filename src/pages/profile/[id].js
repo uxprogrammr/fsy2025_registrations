@@ -147,7 +147,39 @@ export default function ParticipantProfile() {
 
     const renderField = (label, field, type = 'text') => {
         const value = isEditing ? editedData[field] : participant[field];
-
+    
+        if (isEditing && field === 'gender') {
+            return (
+                <div className="mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+                    <div className="flex gap-4">
+                        <label className="flex items-center">
+                            <input
+                                type="radio"
+                                name="gender"
+                                value="Male"
+                                checked={value === 'Male'}
+                                onChange={(e) => handleChange(field, e.target.value)}
+                                className="mr-2"
+                            />
+                            <span className="text-gray-900">Male</span>
+                        </label>
+                        <label className="flex items-center">
+                            <input
+                                type="radio"
+                                name="gender"
+                                value="Female"
+                                checked={value === 'Female'}
+                                onChange={(e) => handleChange(field, e.target.value)}
+                                className="mr-2"
+                            />
+                            <span className="text-gray-900">Female</span>
+                        </label>
+                    </div>
+                </div>
+            );
+        }
+    
         return (
             <div className="mb-2">
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -179,6 +211,7 @@ export default function ParticipantProfile() {
             </div>
         );
     };
+    
 
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
