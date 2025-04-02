@@ -14,6 +14,7 @@ export default function ParticipantProfile() {
     const [editedData, setEditedData] = useState({});
     const [saving, setSaving] = useState(false);
     const [showQR, setShowQR] = useState(false);
+    const [integrityIssues, setIntegrityIssues] = useState([]);
 
     useEffect(() => {
         async function fetchParticipant() {
@@ -39,6 +40,22 @@ export default function ParticipantProfile() {
 
         fetchParticipant();
     }, [id]);
+
+    useEffect(() => {
+        if (participant) {
+            const issues = checkDataIntegrity(participant);
+            checkDuplicateRegistration(participant).then(duplicates => {
+                if (duplicates.length > 0) {
+                    issues.push({
+                        type: 'error',
+                        message: 'Possible duplicate registration found',
+                        details: duplicates
+                    });
+                }
+                setIntegrityIssues(issues);
+            });
+        }
+    }, [participant]);
 
     const handleEdit = () => {
         // Create a clean copy of the current data, preserving all fields
@@ -163,6 +180,146 @@ export default function ParticipantProfile() {
         );
     };
 
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return email ? emailRegex.test(email) : false;
+    };
+
+    const checkDataIntegrity = (data) => {
+        const issues = [];
+
+        // Check contact details
+        if (!data.phone_number && !data.email) {
+            issues.push({
+                type: 'error',
+                message: 'No contact information provided. Either phone number or email is required.'
+            });
+        }
+
+        // Check email formats
+        if (data.email && !validateEmail(data.email)) {
+            issues.push({
+                type: 'error',
+                message: 'Invalid participant email format'
+            });
+        }
+        if (data.father_email && !validateEmail(data.father_email)) {
+            issues.push({
+                type: 'error',
+                message: 'Invalid father\'s email format'
+            });
+        }
+        if (data.mother_email && !validateEmail(data.mother_email)) {
+            issues.push({
+                type: 'error',
+                message: 'Invalid mother\'s email format'
+            });
+        }
+        if (data.bishop_email && !validateEmail(data.bishop_email)) {
+            issues.push({
+                type: 'error',
+                message: 'Invalid bishop\'s email format'
+            });
+        }
+
+        // Check required fields
+        const requiredFields = {
+            first_name: 'First Name',
+            last_name: 'Last Name',
+            gender: 'Gender',
+            birth_date: 'Birth Date',
+            stake_name: 'Stake Name',
+            unit_name: 'Unit Name'
+        };
+
+        Object.entries(requiredFields).forEach(([field, label]) => {
+            if (!data[field]) {
+                issues.push({
+                    type: 'warning',
+                    message: `${label} is missing`
+                });
+            }
+        });
+
+        // Check parent information
+        if (!data.father_name && !data.mother_name) {
+            issues.push({
+                type: 'warning',
+                message: 'No parent information provided'
+            });
+        }
+
+        return issues;
+    };
+
+    const checkDuplicateRegistration = async (data) => {
+        try {
+            const response = await fetch(`/api/participants/check-duplicate`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: data.email,
+                    phone_number: data.phone_number,
+                    exclude_id: data.fsy_id // Exclude current profile when checking
+                }),
+            });
+            
+            const result = await response.json();
+            return result.duplicates || [];
+        } catch (error) {
+            console.error('Error checking duplicates:', error);
+            return [];
+        }
+    };
+
+    const DataIntegrityWarnings = ({ issues }) => {
+        if (!issues.length) return null;
+
+        return (
+            <div className="mb-6">
+                <div className="bg-white rounded-lg shadow p-4">
+                    <h3 className="text-lg font-semibold mb-2">Data Integrity Issues</h3>
+                    <div className="space-y-2">
+                        {issues.map((issue, index) => (
+                            <div 
+                                key={index} 
+                                className={`p-3 rounded ${
+                                    issue.type === 'error' 
+                                        ? 'bg-red-50 text-red-700 border border-red-200' 
+                                        : 'bg-yellow-50 text-yellow-700 border border-yellow-200'
+                                }`}
+                            >
+                                <div className="flex items-center">
+                                    {issue.type === 'error' ? (
+                                        <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                        </svg>
+                                    ) : (
+                                        <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                        </svg>
+                                    )}
+                                    <span>{issue.message}</span>
+                                </div>
+                                {issue.details && (
+                                    <div className="mt-2 text-sm">
+                                        {issue.details.map((detail, idx) => (
+                                            <div key={idx} className="ml-7">
+                                                • FSY ID: {detail.fsy_id}, Name: {detail.first_name} {detail.last_name}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     if (loading) {
         return (
             <ProtectedRoute>
@@ -246,6 +403,8 @@ export default function ParticipantProfile() {
                         )}
                     </div>
                 </div>
+
+                <DataIntegrityWarnings issues={integrityIssues} />
 
                 <div className="flex gap-6">
                     {/* Left Column */}
