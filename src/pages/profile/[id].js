@@ -15,6 +15,7 @@ export default function ParticipantProfile() {
     const [saving, setSaving] = useState(false);
     const [showQR, setShowQR] = useState(false);
     const [integrityIssues, setIntegrityIssues] = useState([]);
+    const [registrationStatus, setRegistrationStatus] = useState('');
 
     useEffect(() => {
         async function fetchParticipant() {
@@ -22,7 +23,7 @@ export default function ParticipantProfile() {
 
             try {
                 setLoading(true);
-                const response = await fetch(`/api/participants/${id}`);
+                const response = await fetch(`/api/profiles/${id}`);
                 const result = await response.json();
 
                 if (!response.ok) {
@@ -56,6 +57,14 @@ export default function ParticipantProfile() {
             });
         }
     }, [participant]);
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const statusFromUrl = urlParams.get('status');
+        if (statusFromUrl) {
+            setRegistrationStatus(statusFromUrl);
+        }
+    }, []);
 
     const handleEdit = () => {
         const editableData = {
@@ -103,7 +112,7 @@ export default function ParticipantProfile() {
             setSaving(true);
             console.log('Saving data:', editedData);
 
-            const response = await fetch(`/api/participants/${id}/update`, {
+            const response = await fetch(`/api/profiles/${id}/update`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -119,7 +128,7 @@ export default function ParticipantProfile() {
             }
 
             // Fetch fresh data after update
-            const updatedResponse = await fetch(`/api/participants/${id}`);
+            const updatedResponse = await fetch(`/api/profiles/${id}`);
             const updatedData = await updatedResponse.json();
             
             console.log('Updated participant data:', updatedData); // Debug log
@@ -209,6 +218,36 @@ export default function ParticipantProfile() {
                 </div>
             );
         }
+
+        // Render Status as a ComboBox (Select)
+        if (field === 'status') {
+            const statuses = ["Awaiting Approval", "Approved", "Cancelled"];
+            return (
+                <div className="mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+                    {isEditing ? (
+                        <select
+                            value={editedData[field] !== undefined ? editedData[field] : participant[field] || ''}
+                            onChange={(e) => handleChange(field, e.target.value)}
+                            className="w-full px-3 py-2 text-black bg-white border border-gray-300 rounded"
+                        >
+                            {statuses.map((status) => (
+                                <option key={status} value={status}>
+                                    {status}
+                                </option>
+                            ))}
+                        </select>
+                    ) : (
+                        <div className="text-gray-900 px-3 py-2 bg-gray-50 border border-gray-300 rounded">
+                            {participant[field] || 'Not provided'}
+                        </div>
+                    )}
+                </div>
+            );
+        }
+
+
+
     
         // Default field rendering
         return (
@@ -321,7 +360,7 @@ export default function ParticipantProfile() {
 
     const checkDuplicateRegistration = async (data) => {
         try {
-            const response = await fetch(`/api/participants/check-duplicate`, {
+            const response = await fetch(`/api/profiles/check-duplicate`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -387,6 +426,41 @@ export default function ParticipantProfile() {
         );
     };
 
+    const handleApplyFilter = async () => {
+        try {
+            setLoading(true);
+            
+            const params = new URLSearchParams();
+            if (selectedStake && selectedStake !== '') {
+                params.append('stake_name', selectedStake);
+            }
+            if (selectedUnit && selectedUnit !== '') {
+                params.append('unit_name', selectedUnit);
+            }
+            // Only append status if it's not empty
+            if (registrationStatus && registrationStatus !== '') {
+                params.append('status', registrationStatus);
+                console.log('[DEBUG] Applying status filter:', registrationStatus);
+            }
+
+            const queryString = params.toString();
+            console.log('[DEBUG] Query params:', queryString);
+            
+            const url = `/api/counselors${queryString ? `?${queryString}` : ''}`;
+            const response = await fetch(url);
+            const result = await response.json();
+            
+            if (typeof onApplyFilter === 'function') {
+                onApplyFilter(result);
+            }
+        } catch (error) {
+            console.error('[DEBUG] Error:', error);
+            setError('Failed to apply filters. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     if (loading) {
         return (
             <ProtectedRoute>
@@ -433,7 +507,7 @@ export default function ParticipantProfile() {
             <div className="p-6">
                 {/* Header with Edit/Save buttons */}
                 <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-2xl font-bold text-gray-900">Participant Profile</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">Profile</h1>
                     <div className="flex gap-2">
                         {isEditing ? (
                             <>
@@ -559,6 +633,9 @@ export default function ParticipantProfile() {
                                     <div className="space-y-4">
                                         <div>
                                             {renderField('T-Shirt Size', 'shirt_size')}
+                                            <div>
+                                                {renderField('Status', 'status')}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

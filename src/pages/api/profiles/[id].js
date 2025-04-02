@@ -8,13 +8,12 @@ export default async function handler(req, res) {
     const { id } = req.query;
 
     try {
-        console.log('Fetching participant with ID:', id);
+        console.log('Fetching profile with ID:', id);
 
         const result = await query(`
             SELECT *
             FROM registrations
             WHERE fsy_id = ?
-            AND participant_type = 'Participant'
             LIMIT 1
         `, [id]);
 
@@ -23,7 +22,7 @@ export default async function handler(req, res) {
         if (result.length === 0) {
             return res.status(404).json({ 
                 success: false, 
-                message: 'Participant not found' 
+                message: 'Profile not found' 
             });
         }
 
@@ -32,10 +31,10 @@ export default async function handler(req, res) {
             data: result[0]
         });
     } catch (error) {
-        console.error('Error fetching participant:', error);
+        console.error('Error fetching profile:', error);
         res.status(500).json({ 
             success: false, 
-            message: 'Error fetching participant data'
+            message: 'Error fetching profile data'
         });
     }
 } 

@@ -1,67 +1,33 @@
-// src/context/CounselorContext.js
-import { createContext, useContext, useState, useEffect } from 'react';
+// src/contexts/CounselorContext.js
+import React, { createContext, useContext, useState } from 'react';
 
-// Create the context
 const CounselorContext = createContext();
 
-// Custom hook to use the context
-export const useCounselor = () => useContext(CounselorContext);
-
-// Provider component
-export const CounselorProvider = ({ children }) => {
+export function CounselorProvider({ children }) {
     const [counselors, setCounselors] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [selectedStake, setSelectedStake] = useState('');
-    const [selectedUnit, setSelectedUnit] = useState('');
-    const [registrationStatus, setRegistrationStatus] = useState('');
 
-    // Fetch counselors data
-    const fetchCounselors = async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const response = await fetch(
-                `/api/counselors?search=${searchTerm}&stake_name=${selectedStake}&unit_name=${selectedUnit}&status=${registrationStatus}`
-            );
-            const result = await response.json();
-            setCounselors(result.data || []);
-        } catch (err) {
-            setError("Error fetching counselors.");
-            console.error(err);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // Trigger data fetch when filters change
-    useEffect(() => {
-        fetchCounselors();
-    }, [searchTerm, selectedStake, selectedUnit, registrationStatus]);
-
-    // Update the filters
-    const applyFilter = (filters) => {
-        setSearchTerm(filters.searchTerm);
-        setSelectedStake(filters.selectedStake);
-        setSelectedUnit(filters.selectedUnit);
-        setRegistrationStatus(filters.registrationStatus);
+    const updateCounselors = (data) => {
+        console.log('Updating counselors in context with:', data);
+        setCounselors(Array.isArray(data) ? data : []);
     };
 
     return (
-        <CounselorContext.Provider
-            value={{
-                counselors,
-                loading,
-                error,
-                searchTerm,
-                selectedStake,
-                selectedUnit,
-                registrationStatus,
-                applyFilter,
-            }}
-        >
+        <CounselorContext.Provider value={{ 
+            counselors, 
+            setCounselors: updateCounselors,
+            loading,
+            setLoading
+        }}>
             {children}
         </CounselorContext.Provider>
     );
-};
+}
+
+export function useCounselors() {
+    const context = useContext(CounselorContext);
+    if (!context) {
+        throw new Error('useCounselors must be used within a CounselorProvider');
+    }
+    return context;
+}

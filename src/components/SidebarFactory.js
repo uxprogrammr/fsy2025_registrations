@@ -1,5 +1,5 @@
 // components/SidebarFactory.js
-import CounselorsSidebar from "./sidebars/CounselorSidebar";
+import CounselorSidebar from "./sidebars/CounselorSidebar";
 import DashboardSidebar from "./sidebars/DashboardSidebar";
 import ParticipantSidebar from "./sidebars/ParticipantSidebar";
 
@@ -11,12 +11,9 @@ export default function SidebarFactory({ currentPage, onApplyFilter, ...props })
         case "dashboard":
             return <DashboardSidebar {...props} />;
         case "participants":
-            return <ParticipantSidebar 
-                onApplyFilter={onApplyFilter} 
-                {...props} 
-            />;
+            return <ParticipantSidebar onApplyFilter={onApplyFilter} {...props} />;
         case "counselors":
-            return <CounselorsSidebar {...props} />;
+            return <CounselorSidebar onApplyFilter={onApplyFilter} {...props} />;
         default:
             return null;
     }

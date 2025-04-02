@@ -16,8 +16,7 @@ export default async function handler(req, res) {
             SELECT fsy_id, concat(first_name, " ", last_name) as full_name, 
                 gender, phone_number, email, stake_name, unit_name, status
             FROM registrations 
-            WHERE participant_type = 'Participant'
-            AND (fsy_id = ? OR email = ? OR phone_number = ?)
+            WHERE (fsy_id = ? OR email = ? OR phone_number = ?)
             LIMIT 1
         `, [term, term, term]);
 
@@ -35,8 +34,7 @@ export default async function handler(req, res) {
             SELECT fsy_id, concat(first_name, " ", last_name) as full_name, 
                 gender, phone_number, email, stake_name, unit_name, status
             FROM registrations 
-            WHERE participant_type = 'Participant'
-            AND concat(first_name, " ", last_name) LIKE ?
+            WHERE concat(first_name, " ", last_name) LIKE ?
         `, [`%${term}%`]);
 
         return res.status(200).json({ 

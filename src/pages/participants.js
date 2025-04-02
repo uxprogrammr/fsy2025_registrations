@@ -28,7 +28,7 @@ export default function Participants({ participantsData }) {
 
         try {
             setSearching(true);
-            const response = await fetch(`/api/participants/search?term=${encodeURIComponent(searchTerm)}`);
+            const response = await fetch(`/api/profiles/search?term=${encodeURIComponent(searchTerm)}`);
             const result = await response.json();
 
             if (result.success) {

@@ -42,7 +42,7 @@ export default async function handler(req, res) {
         if (result.affectedRows === 0) {
             return res.status(404).json({ 
                 success: false, 
-                message: 'Participant not found' 
+                message: 'Profile not found' 
             });
         }
 
@@ -51,10 +51,10 @@ export default async function handler(req, res) {
             message: 'Profile updated successfully'
         });
     } catch (error) {
-        console.error('Error updating participant:', error);
+        console.error('Error updating profile:', error);
         res.status(500).json({ 
             success: false, 
-            message: 'Error updating participant data',
+            message: 'Error updating profile data',
             error: error.message
         });
     }

@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
-export default function Menu({ items, activeItem, onItemClick }) {
+export default function Menu({ items, activeItem, onItemClick, participantsData, counselorsData }) {
     const router = useRouter();
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);

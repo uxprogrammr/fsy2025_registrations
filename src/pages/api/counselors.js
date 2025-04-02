@@ -2,17 +2,53 @@ import { query } from '@/lib/db';
 
 export default async function handler(req, res) {
     if (req.method === 'GET') {
+        const { stake_name, unit_name, status } = req.query;
+        console.log('[DEBUG] API - Query params:', req.query);
+        
         try {
-            const result = await query('SELECT * FROM registrations WHERE participant_type = "Counselor"');
+            let sql = `
+                SELECT fsy_id, concat(first_name, " ", last_name) as full_name, 
+                    gender, phone_number, email, stake_name, unit_name, status
+                FROM registrations 
+                WHERE participant_type = 'Counselor'
+            `;
+            
+            const params = [];
 
-            if (result.length === 0) {
-                return res.status(404).json({ success: false, message: 'No counselors found' });
+            // Add filter conditions only if they are provided
+            if (stake_name && stake_name !== '') {
+                sql += ` AND stake_name = ?`;
+                params.push(stake_name);
+            }
+            
+            if (unit_name && unit_name !== '') {
+                sql += ` AND unit_name = ?`;
+                params.push(unit_name);
+            }
+            
+            if (status && status !== '') {
+                sql += ` AND status = ?`;
+                params.push(status);
             }
 
-            res.status(200).json({ success: true, data: result });
+            console.log('[DEBUG] API - SQL:', sql);
+            console.log('[DEBUG] API - Params:', params);
+
+            const result = await query(sql, params);
+            console.log('[DEBUG] API - Result count:', result.length);
+
+            res.status(200).json({ 
+                success: true, 
+                data: result,
+                debug: { sql, params } // Include debug info in development
+            });
         } catch (error) {
-            console.error('Error fetching counselors:', error);
-            res.status(500).json({ success: false, message: 'Server error' });
+            console.error('[DEBUG] API - Error:', error);
+            res.status(500).json({ 
+                success: false, 
+                message: 'Server error',
+                error: error.message 
+            });
         }
     } else {
         res.status(405).json({ message: 'Method not allowed' });

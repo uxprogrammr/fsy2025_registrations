@@ -15,6 +15,7 @@ export default function MyApp({ Component, pageProps }) {
     const [selectedMenu, setSelectedMenu] = useState("Dashboard");
     const [activeMenu, setActiveMenu] = useState("Home");
     const [participantsData, setParticipantsData] = useState([]);
+    const [counselorsData, setCounselorsData] = useState([]);
 
     // Define the mapping of page prefixes to their context providers
     const contextMap = {
@@ -29,9 +30,14 @@ export default function MyApp({ Component, pageProps }) {
     const handleFilterApply = useCallback((filterResult) => {
         console.log('Filter applied in _app.js:', filterResult);
         if (filterResult?.success && Array.isArray(filterResult.data)) {
-            setParticipantsData(filterResult.data);
+            const pagePrefix = router.pathname.split('/')[1];
+            if (pagePrefix === 'participants') {
+                setParticipantsData(filterResult.data);
+            } else if (pagePrefix === 'counselors') {
+                setCounselorsData(filterResult.data);
+            }
         }
-    }, []);
+    }, [router.pathname]);
 
     // Get the context provider
     const pagePrefix = router.pathname.split('/')[1];
@@ -58,6 +64,7 @@ export default function MyApp({ Component, pageProps }) {
                     activeMenu={activeMenu}
                     setActiveMenu={setActiveMenu}
                     participantsData={participantsData}
+                    counselorsData={counselorsData}
                 />
             </ContextProvider>
         </Layout>
