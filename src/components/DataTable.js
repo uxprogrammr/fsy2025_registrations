@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import EllipsisMenu from "./EllipsisMenu";
 
-export function DataTable({ data, getMenuItems }) {
+export function DataTable({ data, getMenuItems = () => [] }) {
     if (!Array.isArray(data) || data.length === 0) {
         return <p className="text-gray-700">No data available</p>;
     }
@@ -25,6 +25,9 @@ export function DataTable({ data, getMenuItems }) {
     const isSensitive = (header) =>
         header.toLowerCase().includes("phone") || header.toLowerCase().includes("email");
 
+    // Determine if any item has menu items
+    const hasActions = data.some((item) => getMenuItems(item).length > 0);
+
     return (
         <div className="overflow-auto rounded-lg shadow">
             <table className="min-w-full bg-white border border-gray-200 text-sm">
@@ -35,7 +38,9 @@ export function DataTable({ data, getMenuItems }) {
                                 {header.replace(/_/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())}
                             </th>
                         ))}
-                        <th className="py-1 px-2 text-left font-medium">Actions</th>
+                        {hasActions && (
+                            <th className="py-1 px-2 text-left font-medium">Actions</th>
+                        )}
                     </tr>
                 </thead>
                 <tbody>
@@ -64,9 +69,11 @@ export function DataTable({ data, getMenuItems }) {
                                     )}
                                 </td>
                             ))}
-                            <td className="py-1 px-2 text-left">
-                                <EllipsisMenu items={getMenuItems(item)} />
-                            </td>
+                            {hasActions && (
+                                <td className="py-1 px-2 text-left">
+                                    <EllipsisMenu items={getMenuItems(item)} />
+                                </td>
+                            )}
                         </tr>
                     ))}
                 </tbody>
