@@ -2,16 +2,19 @@ import React, { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import EllipsisMenu from "./EllipsisMenu";
 
-export function DataTable({ data, getMenuItems = () => [] }) {
+export function DataTable({ 
+    data, 
+    getMenuItems = () => [],
+    onRowDoubleClick = null // Generic double click handler
+}) {
+    const [visibleFields, setVisibleFields] = useState({});
+
     if (!Array.isArray(data) || data.length === 0) {
         return <p className="text-gray-700">No data available</p>;
     }
 
-    // Dynamically extract headers from the data keys
     const headers = Object.keys(data[0]);
-
-    // State to track visibility of sensitive fields
-    const [visibleFields, setVisibleFields] = useState({});
+    const hasActions = data.some((item) => getMenuItems(item).length > 0);
 
     // Toggle visibility of sensitive data
     const toggleVisibility = (index, header) => {
@@ -24,9 +27,6 @@ export function DataTable({ data, getMenuItems = () => [] }) {
     // Check if a header contains sensitive data (phone or email)
     const isSensitive = (header) =>
         header.toLowerCase().includes("phone") || header.toLowerCase().includes("email");
-
-    // Determine if any item has menu items
-    const hasActions = data.some((item) => getMenuItems(item).length > 0);
 
     return (
         <div className="overflow-auto rounded-lg shadow">
@@ -45,7 +45,11 @@ export function DataTable({ data, getMenuItems = () => [] }) {
                 </thead>
                 <tbody>
                     {data.map((item, index) => (
-                        <tr key={index} className="border-t bg-gray-50 hover:bg-gray-100 text-gray-800">
+                        <tr 
+                            key={index} 
+                            className={`border-t bg-gray-50 hover:bg-gray-100 text-gray-800 ${onRowDoubleClick ? 'cursor-pointer' : ''}`}
+                            onDoubleClick={() => onRowDoubleClick && onRowDoubleClick(item)}
+                        >
                             {headers.map((header) => (
                                 <td key={header} className="py-1 px-2 text-left">
                                     {isSensitive(header) ? (

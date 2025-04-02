@@ -43,7 +43,7 @@ export default function EllipsisMenu({ items }) {
                 <div
                     ref={menuRef}
                     style={{ top: menuPosition.top, left: menuPosition.left }}
-                    className="fixed bg-white border border-gray-300 shadow-lg rounded-md z-50"
+                    className="fixed bg-white border border-gray-300 shadow-lg rounded-md z-50 min-w-[120px]"
                 >
                     {items.map((item, index) => (
                         <button
@@ -52,7 +52,7 @@ export default function EllipsisMenu({ items }) {
                                 item.action();
                                 setIsOpen(false);
                             }}
-                            className="block px-4 py-2 text-left text-gray-800 hover:bg-gray-100 w-full"
+                            className="block w-full px-4 py-2 text-left text-gray-800 hover:bg-gray-100 whitespace-nowrap"
                         >
                             {item.label}
                         </button>
