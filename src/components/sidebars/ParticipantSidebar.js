@@ -122,7 +122,7 @@ export default function ParticipantSidebar({ onApplyFilter }) {
                         setSelectedUnit(''); // Reset unit when stake changes
                     }}
                 >
-                    <option value="">Select Stake</option>
+                    <option value="">All Stakes</option>
                     {stakes.map((stake) => (
                         <option key={stake.stake_name} value={stake.stake_name}>
                             {stake.stake_name}
@@ -143,7 +143,7 @@ export default function ParticipantSidebar({ onApplyFilter }) {
                     }}
                     disabled={!selectedStake}
                 >
-                    <option value="">Select Unit</option>
+                    <option value="">All Units</option>
                     {units.map((unit) => (
                         <option key={unit.unit_name} value={unit.unit_name}>
                             {unit.unit_name}
@@ -163,7 +163,7 @@ export default function ParticipantSidebar({ onApplyFilter }) {
                         setRegistrationStatus(value);
                     }}
                 >
-                    <option value="">Select Status</option>
+                    <option value="">All Statuses</option>
                     <option value="Awaiting Approval">Awaiting Approval</option>
                     <option value="Approved">Approved</option>
                     <option value="Cancelled">Cancelled</option>
