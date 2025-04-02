@@ -5,13 +5,19 @@ import UserInfo from "../components/UserInfo";
 import Menu from "../components/Menu";
 import { useRouter } from 'next/router';
 
-export default function Layout({ children, selectedStake, setSelectedStake, isSidebarOpen, setIsSidebarOpen, selectedMenu, setSelectedMenu, activeMenu, setActiveMenu }) {
+export default function Layout({ children, selectedStake, setSelectedStake, isSidebarOpen, setIsSidebarOpen, selectedMenu, setSelectedMenu, activeMenu, setActiveMenu, onFilterApply }) {
     const router = useRouter();
     const currentPage = router.pathname.split('/')[1]; // Get the current page from the URL
 
     // Check if the current page requires authentication
     const noAuthPages = ["/login", "/counselor-signup", "/participant-signup"];
     const isAuthenticated = !noAuthPages.includes(router.pathname);
+
+    // Add console log to debug
+    console.log('Layout props:', { 
+        currentPage, 
+        hasOnFilterApply: !!onFilterApply 
+    });
 
     const menuItems = [
         { label: 'Home', path: '/dashboard' },
@@ -44,6 +50,7 @@ export default function Layout({ children, selectedStake, setSelectedStake, isSi
                     setIsSidebarOpen={setIsSidebarOpen}
                     selectedMenu={selectedMenu}
                     setSelectedMenu={setSelectedMenu}
+                    onApplyFilter={onFilterApply}
                 />
             )}
             <main className="flex-1 p-2 overflow-y-auto bg-white">

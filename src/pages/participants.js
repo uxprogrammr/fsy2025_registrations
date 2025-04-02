@@ -1,21 +1,37 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
-import ParticipantSidebar from "@/components/sidebars/ParticipantSidebar";
 import DataTable from "@/components/DataTable";
 import ProtectedRoute from '@/components/ProtectedRoute';
 
-export default function Participants() {
+export default function Participants({ participantsData }) {
     const [participants, setParticipants] = useState([]);
+    const [loading, setLoading] = useState(true);
     const router = useRouter();
 
-    const handleApplyFilter = async (filter) => {
+    // Load initial data
+    useEffect(() => {
+        fetchParticipants();
+    }, []);
+
+    // Update participants when filtered data changes
+    useEffect(() => {
+        if (Array.isArray(participantsData)) {
+            setParticipants(participantsData);
+        }
+    }, [participantsData]);
+
+    const fetchParticipants = async () => {
         try {
-            const { searchTerm, selectedStake, selectedUnit, registrationStatus } = filter;
-            const response = await fetch(`/api/participants?search=${searchTerm}&stake_name=${selectedStake}&unit_name=${selectedUnit}&status=${registrationStatus}`);
+            setLoading(true);
+            const response = await fetch('/api/participants');
             const result = await response.json();
-            setParticipants(result.data);
+            if (result.success && result.data) {
+                setParticipants(result.data);
+            }
         } catch (error) {
             console.error("Error fetching participants:", error);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -30,11 +46,19 @@ export default function Participants() {
         <ProtectedRoute>
             <div className="flex">
                 <div className="flex-1 p-4">
-                    <h1 className="text-3xl font-bold mb-6">Participants</h1>
-                    {participants.length > 0 ? (
-                        <DataTable data={participants} getMenuItems={getMenuItems} />
+                    <h1 className="text-xl font-bold mb-6">Participants</h1>
+                    {loading ? (
+                        <p className="text-gray-700">Loading participants...</p>
+                    ) : participants && participants.length > 0 ? (
+                        <DataTable 
+                            data={participants} 
+                            getMenuItems={getMenuItems}
+                        />
                     ) : (
-                        <p className="text-gray-700">No participants found</p>
+                        <div>
+                            <p className="text-gray-700">No participants found</p>
+                            <p className="text-sm text-gray-500">Try adjusting your filters</p>
+                        </div>
                     )}
                 </div>
             </div>
