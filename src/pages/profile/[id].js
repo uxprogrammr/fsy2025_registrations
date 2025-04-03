@@ -84,7 +84,9 @@ export default function Profile() {
             mother_email: participant.mother_email,
             mother_phone_number: participant.mother_phone_number,
             medical_information: participant.medical_information,
-            dietary_information: participant.dietary_information
+            dietary_information: participant.dietary_information,
+            participant_type: participant.participant_type,
+            status: participant.status,
             // Exclude Church Information fields here
         };
     
@@ -246,7 +248,32 @@ export default function Profile() {
             );
         }
 
-
+        // Render Type as a ComboBox (Select)
+        if (field === 'participant_type') {
+            const statuses = ["Participant", "Counselor"];
+            return (
+                <div className="mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+                    {isEditing ? (
+                        <select
+                            value={editedData[field] !== undefined ? editedData[field] : participant[field] || ''}
+                            onChange={(e) => handleChange(field, e.target.value)}
+                            className="w-full px-3 py-2 text-black bg-white border border-gray-300 rounded"
+                        >
+                            {statuses.map((status) => (
+                                <option key={status} value={status}>
+                                    {status}
+                                </option>
+                            ))}
+                        </select>
+                    ) : (
+                        <div className="text-gray-900 px-3 py-2 bg-gray-50 border border-gray-300 rounded">
+                            {participant[field] || 'Not provided'}
+                        </div>
+                    )}
+                </div>
+            );
+        }
 
     
         // Default field rendering
@@ -633,9 +660,12 @@ export default function Profile() {
                                     <div className="space-y-4">
                                         <div>
                                             {renderField('T-Shirt Size', 'shirt_size')}
-                                            <div>
-                                                {renderField('Status', 'status')}
-                                            </div>
+                                        </div>
+                                        <div>
+                                            {renderField('Status', 'status')}
+                                        </div>
+                                        <div>
+                                            {renderField('Type', 'participant_type')}
                                         </div>
                                     </div>
                                 </div>
