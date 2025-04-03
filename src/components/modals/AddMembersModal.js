@@ -269,7 +269,7 @@ export default function AddMembersModal({ isOpen, onClose }) {
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-full max-w-4xl relative max-h-[90vh] overflow-hidden flex flex-col">
+            <div className="bg-white rounded-lg p-6 w-full max-w-7xl relative max-h-[90vh] overflow-hidden flex flex-col">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-xl font-bold text-gray-900">Add Members</h2>
                     <button
@@ -281,7 +281,7 @@ export default function AddMembersModal({ isOpen, onClose }) {
                 </div>
 
                 {/* Company and Group Selection */}
-                <div className="grid grid-cols-2 gap-4 mb-4">
+                <div className="grid grid-cols-2 gap-6 mb-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                             Company *
@@ -338,51 +338,41 @@ export default function AddMembersModal({ isOpen, onClose }) {
                 </div>
 
                 {/* Search Form */}
-                <form onSubmit={handleSearch} className="mb-4">
-                    <div className="flex gap-2">
-                        <div className="relative flex-1">
+                <div className="mb-4">
+                    <form onSubmit={handleSearch} className="flex items-center gap-4">
+                        <div className="flex-1 relative">
                             <input
                                 type="text"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                placeholder="Search by name, FSY ID, or stake"
-                                className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white placeholder-gray-400"
+                                placeholder="Search by name, FSY ID, or stake name..."
+                                className="w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                             <Search className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
                         </div>
                         <button
                             type="submit"
                             disabled={searching || !searchTerm.trim()}
-                            className={`px-4 py-2 rounded-lg flex items-center ${
+                            className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
                                 searching || !searchTerm.trim()
-                                    ? 'bg-gray-300 cursor-not-allowed text-gray-500'
+                                    ? 'bg-gray-300 cursor-not-allowed'
                                     : 'bg-blue-500 hover:bg-blue-600 text-white'
                             }`}
                         >
                             {searching ? (
                                 <>
-                                    <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                                    <RefreshCw className="h-5 w-5 animate-spin" />
                                     Searching...
                                 </>
                             ) : (
-                                'Search'
+                                <>
+                                    <Search className="h-5 w-5" />
+                                    Search
+                                </>
                             )}
                         </button>
-                        <button
-                            type="button"
-                            onClick={handleClearSearch}
-                            disabled={searching || (searchResults.length === 0 && !searchTerm)}
-                            className={`px-4 py-2 rounded-lg flex items-center ${
-                                searching || (searchResults.length === 0 && !searchTerm)
-                                    ? 'bg-gray-300 cursor-not-allowed text-gray-500'
-                                    : 'bg-red-500 hover:bg-red-600 text-white'
-                            }`}
-                        >
-                            <X className="h-4 w-4 mr-2" />
-                            Clear
-                        </button>
-                    </div>
-                </form>
+                    </form>
+                </div>
 
                 {/* Show search results count if there are any */}
                 {searchResults.length > 0 && (
@@ -392,32 +382,38 @@ export default function AddMembersModal({ isOpen, onClose }) {
                 )}
 
                 {/* Members Table */}
-                <div className="overflow-y-auto flex-1">
+                <div className="flex-1 overflow-auto">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                             <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Full Name
+                                <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12">
+                                    #
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
+                                    Name
+                                </th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">
                                     Gender
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-16">
                                     Age
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Status
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">
+                                    Stake/Unit
                                 </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
                                     Type
                                 </th>
-                                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Action
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-24">
+                                    Status
+                                </th>
+                                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-28">
+                                    Actions
                                 </th>
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {allMembers.map((member) => {
+                            {allMembers.map((member, index) => {
                                 const isExistingMember = companyMembers.some(m => m.fsy_id === member.fsy_id);
                                 
                                 return (
@@ -427,6 +423,9 @@ export default function AddMembersModal({ isOpen, onClose }) {
                                             member.participant_type === 'Counselor' ? 'bg-blue-50' : ''
                                         }`}
                                     >
+                                        <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {index + 1}
+                                        </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="text-sm font-medium text-gray-900">
                                                 {member.full_name}
@@ -446,34 +445,46 @@ export default function AddMembersModal({ isOpen, onClose }) {
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm text-gray-900">
+                                                {member.stake_name}
+                                            </div>
+                                            {member.unit_name && (
+                                                <div className="text-sm text-gray-500">
+                                                    {member.unit_name}
+                                                </div>
+                                            )}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                                                member.participant_type === 'Counselor' 
+                                                    ? 'bg-blue-100 text-blue-800' 
+                                                    : 'bg-green-100 text-green-800'
+                                            }`}>
+                                                {member.participant_type}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
                                             <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                                                 member.status === 'Approved' 
-                                                    ? 'bg-green-100 text-green-800'
-                                                    : member.status === 'Awaiting Approval'
-                                                    ? 'bg-yellow-100 text-yellow-800'
-                                                    : 'bg-red-100 text-red-800'
+                                                    ? 'bg-green-100 text-green-800' 
+                                                    : 'bg-yellow-100 text-yellow-800'
                                             }`}>
                                                 {member.status}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-sm text-gray-900">
-                                                {member.participant_type}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-right">
+                                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             {isExistingMember ? (
                                                 <button
                                                     onClick={() => handleDeleteMember(member)}
                                                     disabled={loading}
                                                     className={`inline-flex items-center px-3 py-1 border border-transparent text-sm leading-4 font-medium rounded-md ${
                                                         loading
-                                                            ? 'bg-red-300 cursor-not-allowed'
+                                                            ? 'bg-gray-300 cursor-not-allowed text-gray-500'
                                                             : 'text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500'
                                                     }`}
                                                 >
                                                     <X className="h-4 w-4 mr-1" />
-                                                    Delete
+                                                    Remove
                                                 </button>
                                             ) : (
                                                 <button

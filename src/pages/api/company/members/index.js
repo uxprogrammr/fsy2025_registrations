@@ -16,9 +16,7 @@ async function getCompanyMembers(req, res) {
 
     try {
         let params = [];
-        let searchParams = [];
-        let companyParams = [];
-
+        
         // Build the UNION query to ensure search results come first
         let sql = `
             (
@@ -35,7 +33,9 @@ async function getCompanyMembers(req, res) {
                     NULL as company_name,
                     NULL as group_name,
                     1 as sort_priority,
-                    0 as is_company_member
+                    0 as is_company_member,
+                    NULL as company_number,  -- Added to match second SELECT
+                    NULL as group_number     -- Added to match second SELECT
                 FROM registrations r
                 LEFT JOIN company_members cm ON r.fsy_id = cm.fsy_id
                 WHERE 
@@ -76,20 +76,20 @@ async function getCompanyMembers(req, res) {
         // Add search parameters
         if (search_term) {
             const searchTerm = `%${search_term}%`;
-            searchParams = [search_term, searchTerm, searchTerm, searchTerm];
+            params = [search_term, searchTerm, searchTerm, searchTerm];
         } else {
-            searchParams = [null, '', '', '']; // Ensure search part returns no results when no search_term
+            params = [null, '', '', '']; // Ensure search part returns no results when no search_term
         }
 
         // Add company/group filters
         if (company_id) {
             sql += ` AND cm.company_id = ?`;
-            companyParams.push(company_id);
+            params.push(company_id);
         }
 
         if (group_id) {
             sql += ` AND cm.group_id = ?`;
-            companyParams.push(group_id);
+            params.push(group_id);
         }
 
         sql += `)
@@ -104,9 +104,6 @@ async function getCompanyMembers(req, res) {
                 group_number,
                 full_name
         `;
-
-        // Combine all parameters
-        params = [...searchParams, ...companyParams];
 
         console.log('Executing query:', sql);
         console.log('With parameters:', params);
