@@ -18,7 +18,7 @@ export default function Counselors({ counselorsData }) {
     }, [counselorsData]);
 
     const handleSearch = async (e) => {
-        e.preventDefault();
+        e.preventDefault(); // Prevent form submission default behavior
         if (!searchTerm.trim()) return;
 
         try {
@@ -122,7 +122,7 @@ export default function Counselors({ counselorsData }) {
 
                     {/* Search and Export Controls */}
                     <div className="mb-6">
-                        <div className="flex items-center gap-2 max-w-4xl">
+                        <form onSubmit={handleSearch} className="flex items-center gap-2 max-w-4xl">
                             <div className="relative flex-1">
                                 <input
                                     type="text"
@@ -136,7 +136,7 @@ export default function Counselors({ counselorsData }) {
                                 </p>
                             </div>
                             <button
-                                onClick={handleSearch}
+                                type="submit"
                                 disabled={searching || !searchTerm.trim()}
                                 className={`h-9 px-4 rounded text-sm ${
                                     searching || !searchTerm.trim()
@@ -157,7 +157,7 @@ export default function Counselors({ counselorsData }) {
                             >
                                 Export to CSV
                             </button>
-                        </div>
+                        </form>
                     </div>
                     
                     {loading || searching ? (

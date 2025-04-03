@@ -173,7 +173,7 @@ export default function Participants({ participantsData }) {
 
                     {/* Search and Export Controls */}
                     <div className="mb-6">
-                        <div className="flex items-center gap-2 max-w-4xl">
+                        <form onSubmit={handleSearch} className="flex items-center gap-2 max-w-4xl">
                             <div className="relative flex-1">
                                 <input
                                     type="text"
@@ -187,7 +187,7 @@ export default function Participants({ participantsData }) {
                                 </p>
                             </div>
                             <button
-                                onClick={handleSearch}
+                                type="submit"
                                 disabled={searching || !searchTerm.trim()}
                                 className={`h-9 px-4 rounded text-sm ${
                                     searching || !searchTerm.trim()
@@ -221,7 +221,7 @@ export default function Participants({ participantsData }) {
                                 </svg>
                                 Export to CSV
                             </button>
-                        </div>
+                        </form>
                     </div>
                     
                     {loading || searching ? (
