@@ -4,7 +4,7 @@ import ProtectedRoute from '@/components/ProtectedRoute';
 import { format } from 'date-fns';
 import { QRCodeSVG } from 'qrcode.react';
 
-export default function ParticipantProfile() {
+export default function Profile() {
     const router = useRouter();
     const { id } = router.query;
     const [participant, setParticipant] = useState(null);
