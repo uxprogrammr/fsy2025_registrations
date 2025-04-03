@@ -1,18 +1,21 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from 'next/router';
 import DataTable from "@/components/DataTable";
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { ChevronDown } from 'lucide-react';
+import AddCompanyModal from '@/components/modals/AddCompanyModal';
+import AddMembersModal from '@/components/modals/AddMembersModal';
+import { toast } from 'react-hot-toast';
 
-export default function Companies() {
+export default function Company() {
     const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [searching, setSearching] = useState(false);
-    const router = useRouter();
-
-    // State for dropdown menus
     const [showActionsMenu, setShowActionsMenu] = useState(false);
+    const [showAddCompanyModal, setShowAddCompanyModal] = useState(false);
+    const [showAddMembersModal, setShowAddMembersModal] = useState(false);
+    const router = useRouter();
 
     const handleSearch = async (e) => {
         e.preventDefault();
@@ -20,7 +23,7 @@ export default function Companies() {
 
         try {
             setSearching(true);
-            const response = await fetch(`/api/companies/members/search?term=${encodeURIComponent(searchTerm)}`);
+            const response = await fetch(`/api/company/members/search?term=${encodeURIComponent(searchTerm)}`);
             const result = await response.json();
 
             if (result.success) {
@@ -35,7 +38,7 @@ export default function Companies() {
 
     const handleExportCSV = async () => {
         try {
-            const response = await fetch('/api/companies/members/export');
+            const response = await fetch('/api/company/members/export');
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -50,21 +53,13 @@ export default function Companies() {
         }
     };
 
-    const columns = [
-        { name: 'FSY ID', selector: row => row.fsy_id, sortable: true },
-        { name: 'Name', selector: row => row.full_name, sortable: true },
-        { name: 'Stake Name', selector: row => row.stake_name, sortable: true },
-        { name: 'Role', selector: row => row.role, sortable: true },
-        { name: 'Group Name', selector: row => row.group_name, sortable: true }
-    ];
-
     return (
         <ProtectedRoute>
             <div className="flex">
                 <div className="flex-1 p-4">
                     {/* Header with Actions */}
                     <div className="flex justify-between items-center mb-6">
-                        <h1 className="text-xl font-bold">Companies</h1>
+                        <h1 className="text-xl font-bold">Company Management</h1>
                         
                         {/* Actions Dropdown */}
                         <div className="relative">
@@ -80,23 +75,32 @@ export default function Companies() {
                                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border">
                                     <div className="py-1">
                                         <button
-                                            onClick={() => router.push('/company/list')}
+                                            onClick={() => {
+                                                setShowActionsMenu(false);
+                                                router.push('/company/list');
+                                            }}
                                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                         >
                                             View Companies
                                         </button>
                                         <div className="border-t border-gray-200"></div>
                                         <button
-                                            onClick={() => router.push('/company/add')}
+                                            onClick={() => {
+                                                setShowActionsMenu(false);
+                                                setShowAddCompanyModal(true);
+                                            }}
                                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                         >
                                             Add Company
                                         </button>
                                         <button
-                                            onClick={() => router.push('/company/groups/add')}
+                                            onClick={() => {
+                                                setShowActionsMenu(false);
+                                                setShowAddMembersModal(true);
+                                            }}
                                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                         >
-                                            Add Group
+                                            Add Members
                                         </button>
                                     </div>
                                 </div>
@@ -142,14 +146,40 @@ export default function Companies() {
                     {/* Members Table */}
                     <DataTable
                         data={members}
-                        columns={columns}
+                        columns={[
+                            { name: 'FSY ID', selector: row => row.fsy_id, sortable: true },
+                            { name: 'Name', selector: row => row.full_name, sortable: true },
+                            { name: 'Stake Name', selector: row => row.stake_name, sortable: true },
+                            { name: 'Role', selector: row => row.role, sortable: true },
+                            { name: 'Group Name', selector: row => row.group_name, sortable: true }
+                        ]}
                         pagination
                         responsive
                         striped
                         highlightOnHover
                     />
+
+                    {/* Add Company Modal */}
+                    <AddCompanyModal
+                        isOpen={showAddCompanyModal}
+                        onClose={() => setShowAddCompanyModal(false)}
+                        onSuccess={() => {
+                            setShowAddCompanyModal(false);
+                            // Refresh the data if needed
+                        }}
+                    />
+
+                    {/* Add Members Modal */}
+                    <AddMembersModal
+                        isOpen={showAddMembersModal}
+                        onClose={() => setShowAddMembersModal(false)}
+                        onSuccess={() => {
+                            setShowAddMembersModal(false);
+                            // Refresh the data if needed
+                        }}
+                    />
                 </div>
             </div>
         </ProtectedRoute>
     );
-}
+} 
