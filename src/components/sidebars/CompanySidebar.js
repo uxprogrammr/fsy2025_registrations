@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useCompanyFilter } from '@/context/CompanyFilterContext';
 
-export default function CompanySidebar({ onApplyFilter }) {
+export default function CompanySidebar() {
+    const { updateFilteredMembers } = useCompanyFilter();
     const [companies, setCompanies] = useState([]);
     const [groups, setGroups] = useState([]);
     const [selectedCompany, setSelectedCompany] = useState('');
@@ -65,14 +67,17 @@ export default function CompanySidebar({ onApplyFilter }) {
     }, [selectedCompany]);
 
     const handleApplyFilter = async () => {
+        if (!selectedCompany) {
+            setError('Please select a company');
+            return;
+        }
+
         try {
             setLoading(true);
             setError(null);
             
             const params = new URLSearchParams();
-            if (selectedCompany) {
-                params.append('company_id', selectedCompany);
-            }
+            params.append('company_id', selectedCompany);
             if (selectedGroup) {
                 params.append('group_id', selectedGroup);
             }
@@ -86,12 +91,14 @@ export default function CompanySidebar({ onApplyFilter }) {
             
             console.log('Filter API response:', result);
 
-            if (typeof onApplyFilter === 'function') {
-                onApplyFilter(result);
+            if (result.success) {
+                updateFilteredMembers(result);
+            } else {
+                setError(result.message || 'Failed to apply filters');
             }
         } catch (error) {
             console.error("Error applying filters:", error);
-            setError('Failed to apply filters. Please try again later.');
+            setError('Failed to apply filters');
         } finally {
             setLoading(false);
         }

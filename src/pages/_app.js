@@ -7,6 +7,7 @@ import { DashboardProvider } from '@/context/DashboardContext';
 import { CounselorProvider } from '@/context/CounselorContext';
 import '@/styles/global.css';
 import { Toaster } from 'react-hot-toast';
+import { CompanyFilterProvider } from '@/context/CompanyFilterContext';
 
 export default function MyApp({ Component, pageProps }) {
     const router = useRouter();
@@ -45,7 +46,7 @@ export default function MyApp({ Component, pageProps }) {
     const ContextProvider = contextMap[pagePrefix] || (({ children }) => <>{children}</>);
 
     return (
-        <>
+        <CompanyFilterProvider>
             <Toaster 
                 position="top-right"
                 toastOptions={{
@@ -91,6 +92,6 @@ export default function MyApp({ Component, pageProps }) {
                     />
                 </ContextProvider>
             </Layout>
-        </>
+        </CompanyFilterProvider>
     );
 }

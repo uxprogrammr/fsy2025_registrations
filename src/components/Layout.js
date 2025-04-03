@@ -23,7 +23,7 @@ export default function Layout({ children, selectedStake, setSelectedStake, isSi
         { label: 'Home', path: '/dashboard' },
         { label: 'Participants', path: '/participants' },
         { label: 'Counselors', path: '/counselors' },
-        { label: 'Companies', path: '/company' },
+        { label: 'Company', path: '/company' },
         { label: 'Daily Events', path: '/daily-events' },
         {
             label: 'Reports',

@@ -20,21 +20,24 @@ export default async function handler(req, res) {
             SELECT 
                 r.fsy_id,
                 CONCAT(r.first_name, ' ', r.last_name) as full_name,
-                r.stake_name,
+                r.gender,
+                r.status,
                 r.participant_type,
-                cg.group_name,
+                r.stake_name,
+                r.unit_name,
                 c.company_name,
-                0 as is_company_member  -- Flag to identify search results
+                cg.group_name
             FROM registrations r
             LEFT JOIN company_members cm ON r.fsy_id = cm.fsy_id
-            LEFT JOIN companies_groups cg ON cm.group_id = cg.group_id
             LEFT JOIN companies c ON cm.company_id = c.company_id
+            LEFT JOIN companies_groups cg ON cm.group_id = cg.group_id
             WHERE 
                 r.status = 'Approved'
                 AND (
                     r.fsy_id LIKE ? OR
                     CONCAT(r.first_name, ' ', r.last_name) LIKE ? OR
-                    r.stake_name LIKE ?
+                    r.stake_name LIKE ? OR
+                    r.unit_name LIKE ?
                 )
             ORDER BY 
                 CASE 
@@ -45,7 +48,7 @@ export default async function handler(req, res) {
                 r.first_name,
                 r.last_name
             LIMIT 50
-        `, [searchTerm, searchTerm, searchTerm]);
+        `, [searchTerm, searchTerm, searchTerm, searchTerm]);
 
         return res.status(200).json({
             success: true,

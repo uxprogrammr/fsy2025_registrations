@@ -12,105 +12,54 @@ export default async function handler(req, res) {
 }
 
 async function getCompanyMembers(req, res) {
-    const { company_id, group_id, search_term } = req.query;
+    const { company_id, group_id } = req.query;
+
+    if (!company_id) {
+        return res.status(400).json({
+            success: false,
+            message: 'Company ID is required'
+        });
+    }
 
     try {
-        let params = [];
-        
-        // Build the UNION query to ensure search results come first
         let sql = `
-            (
-                -- Search Results (will be first due to sort_priority = 1)
-                SELECT 
-                    r.fsy_id,
-                    CONCAT(r.first_name, ' ', r.last_name) as full_name,
-                    r.gender,
-                    TIMESTAMPDIFF(YEAR, r.birth_date, CURDATE()) as age,
-                    r.status,
-                    r.participant_type,
-                    r.stake_name,
-                    r.unit_name,
-                    NULL as company_name,
-                    NULL as group_name,
-                    1 as sort_priority,
-                    0 as is_company_member,
-                    NULL as company_number,  -- Added to match second SELECT
-                    NULL as group_number     -- Added to match second SELECT
-                FROM registrations r
-                LEFT JOIN company_members cm ON r.fsy_id = cm.fsy_id
-                WHERE 
-                    r.status = 'Approved'
-                    AND cm.fsy_id IS NULL
-                    AND ? IS NOT NULL  -- Only include this part if search_term exists
-                    AND (
-                        r.fsy_id LIKE ? OR
-                        CONCAT(r.first_name, ' ', r.last_name) LIKE ? OR
-                        r.stake_name LIKE ?
-                    )
-            )
-            UNION ALL
-            (
-                -- Company Members (will be second due to sort_priority = 2)
-                SELECT 
-                    r.fsy_id,
-                    CONCAT(r.first_name, ' ', r.last_name) as full_name,
-                    r.gender,
-                    TIMESTAMPDIFF(YEAR, r.birth_date, CURDATE()) as age,
-                    r.status,
-                    r.participant_type,
-                    r.stake_name,
-                    r.unit_name,
-                    c.company_name,
-                    cg.group_name,
-                    2 as sort_priority,
-                    1 as is_company_member,
-                    c.company_number,
-                    cg.group_number
-                FROM company_members cm
-                JOIN registrations r ON cm.fsy_id = r.fsy_id
-                JOIN companies c ON cm.company_id = c.company_id
-                JOIN companies_groups cg ON cm.group_id = cg.group_id
-                WHERE 1=1
+            SELECT 
+                r.fsy_id,
+                CONCAT(r.first_name, ' ', r.last_name) as full_name,
+                r.gender,
+                r.status,
+                r.participant_type,
+                r.stake_name,
+                r.unit_name,
+                c.company_name,
+                cg.group_name
+            FROM company_members cm
+            JOIN registrations r ON cm.fsy_id = r.fsy_id
+            JOIN companies c ON cm.company_id = c.company_id
+            JOIN companies_groups cg ON cm.group_id = cg.group_id
+            WHERE cm.company_id = ?
         `;
 
-        // Add search parameters
-        if (search_term) {
-            const searchTerm = `%${search_term}%`;
-            params = [search_term, searchTerm, searchTerm, searchTerm];
-        } else {
-            params = [null, '', '', '']; // Ensure search part returns no results when no search_term
-        }
-
-        // Add company/group filters
-        if (company_id) {
-            sql += ` AND cm.company_id = ?`;
-            params.push(company_id);
-        }
+        const params = [company_id];
 
         if (group_id) {
             sql += ` AND cm.group_id = ?`;
             params.push(group_id);
         }
 
-        sql += `)
-            ORDER BY 
-                sort_priority,
-                CASE 
-                    WHEN participant_type = 'Counselor' THEN 1
-                    WHEN participant_type = 'Participant' THEN 2
-                    ELSE 3
-                END,
-                company_number,
-                group_number,
-                full_name
+        sql += ` ORDER BY 
+            CASE 
+                WHEN r.participant_type = 'Counselor' THEN 1
+                WHEN r.participant_type = 'Participant' THEN 2
+                ELSE 3
+            END,
+            r.first_name,
+            r.last_name
         `;
 
-        console.log('Executing query:', sql);
-        console.log('With parameters:', params);
+        console.log('Executing query:', sql, params);
 
         const results = await query(sql, params);
-
-        console.log(`Found ${results.filter(r => !r.is_company_member).length} search results and ${results.filter(r => r.is_company_member).length} company members`);
 
         return res.status(200).json({
             success: true,
