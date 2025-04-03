@@ -57,6 +57,14 @@ export default function Company() {
         }
     };
 
+    // Add this new handler for double-click
+    const handleRowDoubleClick = (row) => {
+        if (row.fsy_id) {
+            console.log('Double clicked row:', row); // For debugging
+            router.push(`/profile/${row.fsy_id}`);
+        }
+    };
+
     // Define columns for the DataTable
     const columns = [
         { 
@@ -221,13 +229,14 @@ export default function Company() {
                 </div>
 
                 <DataTable
-                    data={filteredMembers}
                     columns={columns}
+                    data={filteredMembers}
+                    progressPending={loading}
                     pagination
-                    responsive
-                    striped
-                    highlightOnHover
-                    progressPending={searching}
+                    paginationPerPage={25}
+                    paginationRowsPerPageOptions={[25, 50, 100]}
+                    onRowDoubleClick={handleRowDoubleClick}
+                    className="cursor-pointer"
                     noDataComponent={
                         <div className="p-4 text-center text-gray-500">
                             {searchTerm 

@@ -5,7 +5,7 @@ import EllipsisMenu from "./EllipsisMenu";
 export function DataTable({ 
     data, 
     getMenuItems = () => [],
-    onRowDoubleClick = null // Generic double click handler
+    onRowDoubleClick = null
 }) {
     const [visibleFields, setVisibleFields] = useState({});
 
@@ -17,16 +17,40 @@ export function DataTable({
     const hasActions = data.some((item) => getMenuItems(item).length > 0);
 
     // Toggle visibility of sensitive data
-    const toggleVisibility = (index, header) => {
+    const toggleVisibility = (index, header, event) => {
+        // Prevent the double click from triggering when clicking the visibility toggle
+        event.stopPropagation();
         setVisibleFields((prev) => ({
             ...prev,
             [`${index}-${header}`]: !prev[`${index}-${header}`],
         }));
     };
 
+    const handleDoubleClick = (item, event) => {
+        // Prevent double click from bubbling if clicking on sensitive data toggle
+        if (event.target.closest('button')) {
+            return;
+        }
+        if (onRowDoubleClick) {
+            onRowDoubleClick(item);
+        }
+    };
+
     // Check if a header contains sensitive data (phone or email)
     const isSensitive = (header) =>
         header.toLowerCase().includes("phone") || header.toLowerCase().includes("email");
+
+    // Add hover effect to rows
+    const customStyles = {
+        rows: {
+            style: {
+                '&:hover': {
+                    backgroundColor: '#f3f4f6', // Light gray background on hover
+                    cursor: 'pointer',
+                },
+            },
+        },
+    };
 
     return (
         <div className="overflow-auto rounded-lg shadow">
@@ -48,7 +72,7 @@ export function DataTable({
                         <tr 
                             key={index} 
                             className={`border-t bg-gray-50 hover:bg-gray-100 text-gray-800 ${onRowDoubleClick ? 'cursor-pointer' : ''}`}
-                            onDoubleClick={() => onRowDoubleClick && onRowDoubleClick(item)}
+                            onDoubleClick={(e) => handleDoubleClick(item, e)}
                         >
                             {headers.map((header) => (
                                 <td key={header} className="py-1 px-2 text-left">
@@ -58,7 +82,7 @@ export function DataTable({
                                                 ? item[header]
                                                 : "******"}
                                             <button
-                                                onClick={() => toggleVisibility(index, header)}
+                                                onClick={(e) => toggleVisibility(index, header, e)}
                                                 className="text-gray-600 hover:text-gray-800"
                                             >
                                                 {visibleFields[`${index}-${header}`] ? (
