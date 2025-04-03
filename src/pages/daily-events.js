@@ -174,11 +174,20 @@ export default function DailyEvents() {
                                                         periods[period].map((event) => (
                                                             <div
                                                                 key={event.event_id}
-                                                                className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded border border-gray-200"
+                                                                className={`flex items-center justify-between py-2 px-3 rounded border ${
+                                                                    event.attendance_required === 'Y' 
+                                                                        ? 'bg-yellow-50 border-yellow-200' 
+                                                                        : 'bg-gray-50 border-gray-200'
+                                                                }`}
                                                             >
                                                                 <div className="flex-1 grid grid-cols-3 gap-3">
                                                                     <div className="font-medium text-gray-900 text-sm">
                                                                         {event.event_name}
+                                                                        {event.attendance_required === 'Y' && (
+                                                                            <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                                                Required
+                                                                            </span>
+                                                                        )}
                                                                     </div>
                                                                     <div className="text-sm text-gray-600">
                                                                         {event.start_time.slice(0, 5)} - {event.end_time.slice(0, 5)}

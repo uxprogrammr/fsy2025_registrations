@@ -13,15 +13,22 @@ export default async function handler(req, res) {
 
 async function getEvents(req, res) {
     try {
-        const result = await query(`
-            SELECT *
-            FROM daily_events
-            ORDER BY day_number ASC, start_time ASC
+        const events = await query(`
+            SELECT 
+                event_id,
+                event_name,
+                day_number,
+                start_time,
+                end_time,
+                description,
+                attendance_required
+            FROM daily_events 
+            ORDER BY day_number, start_time
         `);
 
         return res.status(200).json({
             success: true,
-            data: result
+            data: events
         });
     } catch (error) {
         console.error('Error fetching events:', error);
@@ -34,22 +41,16 @@ async function getEvents(req, res) {
 
 async function createEvent(req, res) {
     try {
-        const { day_number, event_name, start_time, end_time, description } = req.body;
+        const { event_name, day_number, start_time, end_time, description, attendance_required } = req.body;
 
         // Validate required fields
-        if (!day_number || !event_name || !start_time || !end_time) {
-            return res.status(400).json({
-                success: false,
-                message: 'Day number, event name, start time, and end time are required'
-            });
+        if (!event_name || !day_number || !start_time || !end_time) {
+            return res.status(400).json({ success: false, message: 'Missing required fields' });
         }
 
-        // Validate day range
+        // Validate day number
         if (day_number < 1 || day_number > 7) {
-            return res.status(400).json({
-                success: false,
-                message: 'Day number must be between 1 and 7'
-            });
+            return res.status(400).json({ success: false, message: 'Invalid day number' });
         }
 
         // Validate time format and range
@@ -60,16 +61,13 @@ async function createEvent(req, res) {
             });
         }
 
-        const result = await query(`
-            INSERT INTO daily_events (
-                event_name, 
-                day_number, 
-                start_time, 
-                end_time, 
-                description
-            )
-            VALUES (?, ?, ?, ?, ?)
-        `, [event_name, day_number, start_time, end_time, description || null]);
+        // Insert new event
+        const result = await query(
+            `INSERT INTO daily_events 
+            (event_name, day_number, start_time, end_time, description, attendance_required) 
+            VALUES (?, ?, ?, ?, ?, ?)`,
+            [event_name, day_number, start_time, end_time, description || null, attendance_required || 'N']
+        );
 
         return res.status(201).json({
             success: true,
@@ -79,14 +77,12 @@ async function createEvent(req, res) {
                 day_number,
                 start_time,
                 end_time,
-                description
+                description,
+                attendance_required
             }
         });
     } catch (error) {
         console.error('Error creating event:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Error creating event'
-        });
+        return res.status(500).json({ success: false, message: 'Failed to create event' });
     }
 } 

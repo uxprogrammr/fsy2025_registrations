@@ -7,7 +7,8 @@ export default function EditEventModal({ isOpen, onClose, event, onEventEdited }
         event_name: '',
         start_time: '',
         end_time: '',
-        description: ''
+        description: '',
+        attendance_required: false
     });
     const [saving, setSaving] = useState(false);
 
@@ -18,7 +19,8 @@ export default function EditEventModal({ isOpen, onClose, event, onEventEdited }
                 event_name: event.event_name || '',
                 start_time: event.start_time?.slice(0, 5) || '', // Format time to HH:mm
                 end_time: event.end_time?.slice(0, 5) || '', // Format time to HH:mm
-                description: event.description || ''
+                description: event.description || '',
+                attendance_required: event.attendance_required === 'Y'
             });
         }
     }, [event]);
@@ -40,6 +42,7 @@ export default function EditEventModal({ isOpen, onClose, event, onEventEdited }
                 },
                 body: JSON.stringify({
                     ...formData,
+                    attendance_required: formData.attendance_required ? 'Y' : 'N',
                     day_number: event.day_number
                 }),
             });
@@ -145,6 +148,23 @@ export default function EditEventModal({ isOpen, onClose, event, onEventEdited }
                                 className="w-full px-3 py-2 border rounded text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 placeholder="Enter event description (optional)"
                             />
+                        </div>
+
+                        {/* Add Attendance Required checkbox before the buttons */}
+                        <div className="flex items-center">
+                            <input
+                                type="checkbox"
+                                id="attendance_required_edit"
+                                checked={formData.attendance_required}
+                                onChange={(e) => setFormData(prev => ({
+                                    ...prev,
+                                    attendance_required: e.target.checked
+                                }))}
+                                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                            />
+                            <label htmlFor="attendance_required_edit" className="ml-2 block text-sm text-gray-700">
+                                Attendance Required
+                            </label>
                         </div>
                     </div>
 

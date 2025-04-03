@@ -14,22 +14,16 @@ export default async function handler(req, res) {
 async function updateEvent(req, res) {
     try {
         const { id } = req.query;
-        const { day_number, event_name, start_time, end_time, description } = req.body;
+        const { event_name, day_number, start_time, end_time, description, attendance_required } = req.body;
 
         // Validate required fields
-        if (!day_number || !event_name || !start_time || !end_time) {
-            return res.status(400).json({
-                success: false,
-                message: 'Day number, event name, start time, and end time are required'
-            });
+        if (!event_name || !day_number || !start_time || !end_time) {
+            return res.status(400).json({ success: false, message: 'Missing required fields' });
         }
 
-        // Validate day range
+        // Validate day number
         if (day_number < 1 || day_number > 7) {
-            return res.status(400).json({
-                success: false,
-                message: 'Day number must be between 1 and 7'
-            });
+            return res.status(400).json({ success: false, message: 'Invalid day number' });
         }
 
         // Validate time format and range
@@ -47,40 +41,36 @@ async function updateEvent(req, res) {
         );
 
         if (existingEvent.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Event not found'
-            });
+            return res.status(404).json({ success: false, message: 'Event not found' });
         }
 
+        // Update event
         await query(`
-            UPDATE daily_events
-            SET 
-                event_name = ?, 
+            UPDATE daily_events 
+            SET event_name = ?, 
                 day_number = ?, 
                 start_time = ?, 
                 end_time = ?, 
-                description = ?
+                description = ?,
+                attendance_required = ?
             WHERE event_id = ?
-        `, [event_name, day_number, start_time, end_time, description || null, id]);
+        `, [event_name, day_number, start_time, end_time, description || null, attendance_required || 'N', id]);
 
         return res.status(200).json({
             success: true,
             data: {
-                event_id: parseInt(id),
+                event_id: id,
                 event_name,
                 day_number,
                 start_time,
                 end_time,
-                description
+                description,
+                attendance_required
             }
         });
     } catch (error) {
         console.error('Error updating event:', error);
-        return res.status(500).json({
-            success: false,
-            message: 'Error updating event'
-        });
+        return res.status(500).json({ success: false, message: 'Failed to update event' });
     }
 }
 
