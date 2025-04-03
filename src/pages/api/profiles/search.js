@@ -11,21 +11,39 @@ export default async function handler(req, res) {
     }
 
     try {
-        // First try exact matches
+        // Check if term is a number (fsy_id)
+        const numericTerm = parseInt(term);
+        if (!isNaN(numericTerm)) {
+            // If numeric, only search by fsy_id
+            const result = await query(`
+                SELECT fsy_id, concat(first_name, " ", last_name) as full_name, 
+                    gender, phone_number, email, stake_name, unit_name, status
+                FROM registrations 
+                WHERE fsy_id = ?
+                LIMIT 1
+            `, [numericTerm]);
+
+            return res.status(200).json({ 
+                success: true, 
+                data: result,
+                searchType: 'fsy_id'
+            });
+        }
+
+        // If not numeric, try exact matches for email and phone
         const exactMatches = await query(`
             SELECT fsy_id, concat(first_name, " ", last_name) as full_name, 
                 gender, phone_number, email, stake_name, unit_name, status
             FROM registrations 
-            WHERE (fsy_id = ? OR email = ? OR phone_number = ?)
+            WHERE email = ? OR phone_number = ?
             LIMIT 1
-        `, [term, term, term]);
+        `, [term, term]);
 
-        if (exactMatches.length === 1) {
+        if (exactMatches.length > 0) {
             return res.status(200).json({ 
                 success: true, 
                 data: exactMatches,
-                matchType: exactMatches[0].fsy_id === term ? 'fsy_id' : 
-                          exactMatches[0].email === term ? 'email' : 'phone_number'
+                searchType: exactMatches[0].email === term ? 'email' : 'phone'
             });
         }
 
@@ -40,7 +58,7 @@ export default async function handler(req, res) {
         return res.status(200).json({ 
             success: true, 
             data: nameMatches,
-            matchType: 'name'
+            searchType: 'name'
         });
 
     } catch (error) {
