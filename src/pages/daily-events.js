@@ -3,6 +3,7 @@ import { Plus, X } from 'lucide-react';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import AddEventModal from '@/components/modals/AddEventModal';
 import DeleteConfirmationModal from '@/components/modals/DeleteConfirmationModal';
+import EditEventModal from '@/components/modals/EditEventModal';
 import { toast } from 'react-hot-toast';
 
 export default function DailyEvents() {
@@ -13,6 +14,10 @@ export default function DailyEvents() {
         isOpen: false,
         eventId: null,
         eventName: ''
+    });
+    const [editModal, setEditModal] = useState({
+        isOpen: false,
+        event: null
     });
 
     useEffect(() => {
@@ -75,9 +80,23 @@ export default function DailyEvents() {
         }
     };
 
+    const openEditModal = (event) => {
+        setEditModal({
+            isOpen: true,
+            event: event
+        });
+    };
+
+    const closeEditModal = () => {
+        setEditModal({
+            isOpen: false,
+            event: null
+        });
+    };
+
     const groupEventsByDay = (events) => {
         const grouped = {};
-        for (let i = 1; i <= 7; i++) {
+        for (let i = 1; i <= 5; i++) {
             grouped[i] = {
                 morning: events.filter(e => e.day_number === i && e.start_time < '12:00'),
                 afternoon: events.filter(e => e.day_number === i && e.start_time >= '12:00' && e.start_time < '17:00'),
@@ -134,15 +153,23 @@ export default function DailyEvents() {
                                                                 {event.start_time.slice(0, 5)} - {event.end_time.slice(0, 5)}
                                                             </div>
                                                             <div className="text-sm text-gray-500">
-                                                                {event.description || 'No description'}
+                                                                {event.description ? event.description : ''}
                                                             </div>
                                                         </div>
-                                                        <button
-                                                            onClick={() => openDeleteModal(event)}
-                                                            className="ml-2 p-1 text-red-500 hover:text-red-700 rounded-full hover:bg-red-50"
-                                                        >
-                                                            <X className="h-4 w-4" />
-                                                        </button>
+                                                        <div className="flex items-center gap-2">
+                                                            <button
+                                                                onClick={() => openEditModal(event)}
+                                                                className="text-blue-500 hover:text-blue-700 text-sm font-medium"
+                                                            >
+                                                                Edit
+                                                            </button>
+                                                            <button
+                                                                onClick={() => openDeleteModal(event)}
+                                                                className="p-1 text-red-500 hover:text-red-700 rounded-full hover:bg-red-50"
+                                                            >
+                                                                <X className="h-4 w-4" />
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 ))
                                             ) : (
@@ -170,6 +197,13 @@ export default function DailyEvents() {
                     onClose={closeDeleteModal}
                     onConfirm={handleEventDelete}
                     eventName={deleteModal.eventName}
+                />
+
+                <EditEventModal
+                    isOpen={editModal.isOpen}
+                    onClose={closeEditModal}
+                    event={editModal.event}
+                    onEventEdited={fetchEvents}
                 />
             </div>
         </ProtectedRoute>
