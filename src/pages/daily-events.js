@@ -120,134 +120,142 @@ export default function DailyEvents() {
 
     return (
         <ProtectedRoute>
-            <div className="container mx-auto px-4 py-6">
-                <div className="mb-4">
-                    <h1 className="text-2xl font-bold">Daily Events</h1>
-                </div>
+            {/* Add a flex container for the entire page */}
+            <div className="flex min-h-screen">
+                {/* Left space - 20% */}
+                <div className="w-1/4"></div>
 
-                <div className="space-y-4">
-                    {Object.entries(groupedEvents).map(([day, periods]) => (
-                        <div key={day} className="bg-white rounded-lg shadow-md">
-                            {/* Day Header with Toggle */}
-                            <div 
-                                className="flex justify-between items-center p-4 cursor-pointer hover:bg-gray-50"
-                                onClick={() => toggleDay(Number(day))}
-                            >
-                                <div className="flex items-center gap-2">
-                                    {expandedDays[day] ? (
-                                        <ChevronUp className="h-5 w-5 text-gray-500" />
-                                    ) : (
-                                        <ChevronDown className="h-5 w-5 text-gray-500" />
-                                    )}
-                                    <h2 className="text-xl font-bold">Day {day}</h2>
-                                </div>
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation(); // Prevent day toggle when clicking add button
-                                        handleAddEvent(Number(day));
-                                    }}
-                                    className="p-1.5 bg-blue-500 text-white rounded-full hover:bg-blue-600"
+                {/* Main content - 80% */}
+                <div className="flex-1 px-4 py-6">
+                    <div className="mb-4">
+                        <h1 className="text-2xl font-bold">Daily Events</h1>
+                    </div>
+
+                    <div className="space-y-4">
+                        {Object.entries(groupedEvents).map(([day, periods]) => (
+                            <div key={day} className="bg-white rounded-lg shadow-md">
+                                {/* Day Header with Toggle */}
+                                <div 
+                                    className="flex justify-between items-center p-4 cursor-pointer hover:bg-gray-50"
+                                    onClick={() => toggleDay(Number(day))}
                                 >
-                                    <Plus className="h-4 w-4" />
-                                </button>
-                            </div>
+                                    <div className="flex items-center gap-2">
+                                        {expandedDays[day] ? (
+                                            <ChevronUp className="h-5 w-5 text-gray-500" />
+                                        ) : (
+                                            <ChevronDown className="h-5 w-5 text-gray-500" />
+                                        )}
+                                        <h2 className="text-xl font-bold">Day {day}</h2>
+                                    </div>
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleAddEvent(Number(day));
+                                        }}
+                                        className="p-1.5 bg-blue-500 text-white rounded-full hover:bg-blue-600"
+                                    >
+                                        <Plus className="h-4 w-4" />
+                                    </button>
+                                </div>
 
-                            {/* Collapsible Content */}
-                            <div 
-                                className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                                    expandedDays[day] ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
-                                }`}
-                            >
-                                <div className="p-4 pt-0">
-                                    <div className="grid gap-3">
-                                        {['morning', 'afternoon', 'evening'].map((period) => (
-                                            <div key={period}>
-                                                <h3 className={`text-base font-semibold mb-2 ${
-                                                    period === 'morning' ? 'text-blue-600' :
-                                                    period === 'afternoon' ? 'text-yellow-600' :
-                                                    'text-purple-600'
-                                                }`}>
-                                                    {period.charAt(0).toUpperCase() + period.slice(1)}
-                                                </h3>
-                                                <div className="space-y-2">
-                                                    {periods[period].length > 0 ? (
-                                                        periods[period].map((event) => (
-                                                            <div
-                                                                key={event.event_id}
-                                                                className={`flex items-center justify-between py-2 px-3 rounded border ${
-                                                                    event.attendance_required === 'Y' 
-                                                                        ? 'bg-yellow-50 border-yellow-200' 
-                                                                        : 'bg-gray-50 border-gray-200'
-                                                                }`}
-                                                            >
-                                                                <div className="flex-1 grid grid-cols-3 gap-3">
-                                                                    <div className="font-medium text-gray-900 text-sm">
-                                                                        {event.event_name}
-                                                                        {event.attendance_required === 'Y' && (
-                                                                            <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
-                                                                                Required
-                                                                            </span>
-                                                                        )}
+                                {/* Collapsible Content */}
+                                <div 
+                                    className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                                        expandedDays[day] ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+                                    }`}
+                                >
+                                    <div className="p-4 pt-0">
+                                        <div className="grid gap-3">
+                                            {['morning', 'afternoon', 'evening'].map((period) => (
+                                                <div key={period}>
+                                                    <h3 className={`text-base font-semibold mb-2 ${
+                                                        period === 'morning' ? 'text-blue-600' :
+                                                        period === 'afternoon' ? 'text-yellow-600' :
+                                                        'text-purple-600'
+                                                    }`}>
+                                                        {period.charAt(0).toUpperCase() + period.slice(1)}
+                                                    </h3>
+                                                    <div className="space-y-2">
+                                                        {periods[period].length > 0 ? (
+                                                            periods[period].map((event) => (
+                                                                <div
+                                                                    key={event.event_id}
+                                                                    className={`flex items-center justify-between py-2 px-3 rounded border ${
+                                                                        event.attendance_required === 'Y' 
+                                                                            ? 'bg-yellow-50 border-yellow-200' 
+                                                                            : 'bg-gray-50 border-gray-200'
+                                                                    }`}
+                                                                >
+                                                                    <div className="flex-1 grid grid-cols-3 gap-3">
+                                                                        <div className="font-medium text-gray-900 text-sm">
+                                                                            {event.event_name}
+                                                                            {event.attendance_required === 'Y' && (
+                                                                                <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800">
+                                                                                    Attendance Required
+                                                                                </span>
+                                                                            )}
+                                                                        </div>
+                                                                        <div className="text-sm text-gray-600">
+                                                                            {event.start_time.slice(0, 5)} - {event.end_time.slice(0, 5)}
+                                                                        </div>
+                                                                        <div className="text-sm text-gray-500">
+                                                                            {event.description ? event.description : ''}
+                                                                        </div>
                                                                     </div>
-                                                                    <div className="text-sm text-gray-600">
-                                                                        {event.start_time.slice(0, 5)} - {event.end_time.slice(0, 5)}
-                                                                    </div>
-                                                                    <div className="text-sm text-gray-500">
-                                                                        {event.description ? event.description : ''}
+                                                                    <div className="flex items-center gap-2">
+                                                                        <button
+                                                                            onClick={() => openEditModal(event)}
+                                                                            className="text-blue-500 hover:text-blue-700 text-sm font-medium"
+                                                                        >
+                                                                            Edit
+                                                                        </button>
+                                                                        <button
+                                                                            onClick={() => openDeleteModal(event)}
+                                                                            className="p-1 text-red-500 hover:text-red-700 rounded-full hover:bg-red-50"
+                                                                        >
+                                                                            <X className="h-4 w-4" />
+                                                                        </button>
                                                                     </div>
                                                                 </div>
-                                                                <div className="flex items-center gap-2">
-                                                                    <button
-                                                                        onClick={() => openEditModal(event)}
-                                                                        className="text-blue-500 hover:text-blue-700 text-sm font-medium"
-                                                                    >
-                                                                        Edit
-                                                                    </button>
-                                                                    <button
-                                                                        onClick={() => openDeleteModal(event)}
-                                                                        className="p-1 text-red-500 hover:text-red-700 rounded-full hover:bg-red-50"
-                                                                    >
-                                                                        <X className="h-4 w-4" />
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        ))
-                                                    ) : (
-                                                        <p className="text-sm text-gray-500 py-1">
-                                                            No {period} events scheduled
-                                                        </p>
-                                                    )}
+                                                            ))
+                                                        ) : (
+                                                            <p className="text-sm text-gray-500 py-1">
+                                                                No {period} events scheduled
+                                                            </p>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
-
-                <AddEventModal
-                    isOpen={showAddEventModal}
-                    onClose={() => setShowAddEventModal(false)}
-                    dayNumber={selectedDayForModal}
-                    onEventAdded={fetchEvents}
-                />
-
-                <DeleteConfirmationModal
-                    isOpen={deleteModal.isOpen}
-                    onClose={closeDeleteModal}
-                    onConfirm={handleEventDelete}
-                    eventName={deleteModal.eventName}
-                />
-
-                <EditEventModal
-                    isOpen={editModal.isOpen}
-                    onClose={closeEditModal}
-                    event={editModal.event}
-                    onEventEdited={fetchEvents}
-                />
             </div>
+
+            {/* Modals remain the same */}
+            <AddEventModal
+                isOpen={showAddEventModal}
+                onClose={() => setShowAddEventModal(false)}
+                dayNumber={selectedDayForModal}
+                onEventAdded={fetchEvents}
+            />
+
+            <EditEventModal
+                isOpen={editModal.isOpen}
+                onClose={() => setEditModal({ isOpen: false, event: null })}
+                event={editModal.event}
+                onEventEdited={fetchEvents}
+            />
+
+            <DeleteConfirmationModal
+                isOpen={deleteModal.isOpen}
+                onClose={() => setDeleteModal({ isOpen: false, eventId: null, eventName: '' })}
+                onConfirm={handleEventDelete}
+                eventName={deleteModal.eventName}
+            />
         </ProtectedRoute>
     );
 }
