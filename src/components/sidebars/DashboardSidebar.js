@@ -12,7 +12,7 @@ const stakes = [
 
 const reports = ["Units with Low Registrations", "Units with Waiting Approval"];
 
-export default function DashboardSidebar({ selectedStake, setSelectedStake, isSidebarOpen, setIsSidebarOpen, selectedMenu, setSelectedMenu }) {
+export default function DashboardSidebar({ selectedStake, setSelectedStake, isSidebarOpen, setIsSidebarOpen }) {
     return (
         <aside className={`bg-white p-4 transition-all duration-300 ${isSidebarOpen ? "min-w-[250px] w-64" : "min-w-[60px] w-20"} overflow-hidden`}>
             <button
@@ -27,10 +27,7 @@ export default function DashboardSidebar({ selectedStake, setSelectedStake, isSi
                 {stakes.map((stake) => (
                     <li key={stake}>
                         <button
-                            onClick={() => {
-                                setSelectedStake(stake);  // Corrected line
-                                setSelectedMenu("Dashboard"); // Corrected line
-                            }}
+                            onClick={() => setSelectedStake(stake)}
                             className={`w-full text-left p-2 rounded-lg text-black ${selectedStake === stake ? "bg-blue-500 text-white" : "bg-gray-200 hover:bg-gray-300"}`}
                         >
                             {stake}

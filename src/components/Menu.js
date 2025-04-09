@@ -2,19 +2,21 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
-export default function Menu({ items, activeItem, onItemClick, participantsData, counselorsData }) {
+export default function Menu({ items, activeItem, onItemClick }) {
     const router = useRouter();
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);
 
-    const handleItemClick = (item) => {
-        onItemClick(item);
-        router.push(item.path);
-        setShowDropdown(false); // Close the dropdown after clicking
+    const toggleDropdown = () => {
+        setShowDropdown(!showDropdown);
     };
 
-    const toggleDropdown = () => {
-        setShowDropdown((prev) => !prev);
+    const handleItemClick = (item) => {
+        if (item.path) {
+            onItemClick(item);
+            router.push(item.path);
+        }
+        setShowDropdown(false);
     };
 
     // Close dropdown when clicking outside
