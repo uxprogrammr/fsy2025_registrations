@@ -3,7 +3,6 @@ import DataTable from "@/components/DataTable";
 import ReminderModal from "@/components/ReminderModal";
 import RegistrantModal from "@/components/RegistrantModal";
 import ProtectedRoute from '@/components/ProtectedRoute';
-import '@/styles/global.css';
 
 export default function UnitsWithLowRegistrations() {
     const [lowRegistrationData, setLowRegistrationData] = useState([]);

@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: true,
+    output: 'standalone',
     async redirects() {
         return [
             {
@@ -14,6 +15,13 @@ const nextConfig = {
                 permanent: true,
             },
         ];
+    },
+    webpack: (config) => {
+        config.resolve.fallback = {
+            ...config.resolve.fallback,
+            fs: false,
+        };
+        return config;
     },
 };
 

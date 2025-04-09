@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import '@/styles/global.css';
 
 export default function Login() {
     const [username, setUsername] = useState('');
@@ -99,15 +98,6 @@ export default function Login() {
                 >
                     Login
                 </button>
-
-                <div className="mt-4 flex justify-between">
-                    <Link href="/participant-signup" className="text-blue-500 hover:underline">
-                        Participant Sign Up
-                    </Link>
-                    <Link href="/counselor-signup" className="text-blue-500 hover:underline">
-                        Counselor Sign Up
-                    </Link>
-                </div>
             </div>
         </div>
     );
