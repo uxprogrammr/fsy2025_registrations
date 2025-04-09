@@ -1,10 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: true,
-    eslint: {
-        // This will ignore ESLint errors during build
-        ignoreDuringBuilds: true,
-      },
     async redirects() {
         return [
             {

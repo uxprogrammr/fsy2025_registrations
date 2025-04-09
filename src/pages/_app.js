@@ -5,10 +5,8 @@ import Layout from '@/components/Layout';
 import { ParticipantProvider } from '@/context/ParticipantContext';
 import { DashboardProvider } from '@/context/DashboardContext';
 import { CounselorProvider } from '@/context/CounselorContext';
-import '@/styles/global.css';
 import { Toaster } from 'react-hot-toast';
 import { CompanyFilterProvider } from '@/context/CompanyFilterContext';
-import { SessionProvider } from 'next-auth/react';
 
 export default function MyApp({ Component, pageProps }) {
     const router = useRouter();
