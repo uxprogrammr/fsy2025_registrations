@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { LineGraph, BarGraph, PieGraph } from "@/components/Charts";
 import { WordCloudChart } from "@/components/WordCloud";
 import ProtectedRoute from '@/components/ProtectedRoute';
-import '@/styles/global.css';
 
 export default function Dashboard({ selectedStake, participantType, setParticipantType }) {
     const [data, setData] = useState({

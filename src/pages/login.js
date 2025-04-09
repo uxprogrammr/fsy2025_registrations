@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import '@/styles/global.css';
 
 export default function Login() {
     const [username, setUsername] = useState('');
