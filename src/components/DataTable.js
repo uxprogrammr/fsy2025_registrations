@@ -52,6 +52,8 @@ export function DataTable({
         },
     };
 
+    const styles = customStyles; // Use it or remove the declaration
+
     return (
         <div className="overflow-auto rounded-lg shadow">
             <table className="min-w-full bg-white border border-gray-200 text-sm">

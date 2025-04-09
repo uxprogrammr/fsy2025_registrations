@@ -6,7 +6,6 @@ import Layout from '@/components/Layout';
 import { ParticipantProvider } from '@/context/ParticipantContext';
 import { DashboardProvider } from '@/context/DashboardContext';
 import { CounselorProvider } from '@/context/CounselorContext';
-import '@/styles/global.css';
 import { Toaster } from 'react-hot-toast';
 import { CompanyFilterProvider } from '@/context/CompanyFilterContext';
 
@@ -47,54 +46,52 @@ export default function MyApp({ Component, pageProps: { session, ...pageProps } 
     const ContextProvider = contextMap[pagePrefix] || (({ children }) => <>{children}</>);
 
     return (
-        <SessionProvider session={session}>
-            <CompanyFilterProvider>
-                <Toaster 
-                    position="top-right"
-                    toastOptions={{
-                        duration: 3000,
+        <CompanyFilterProvider>
+            <Toaster 
+                position="top-right"
+                toastOptions={{
+                    duration: 3000,
+                    style: {
+                        background: '#333',
+                        color: '#fff',
+                    },
+                    success: {
                         style: {
-                            background: '#333',
-                            color: '#fff',
+                            background: '#22c55e',
                         },
-                        success: {
-                            style: {
-                                background: '#22c55e',
-                            },
+                    },
+                    error: {
+                        style: {
+                            background: '#ef4444',
                         },
-                        error: {
-                            style: {
-                                background: '#ef4444',
-                            },
-                            duration: 4000,
-                        },
-                    }}
-                />
-                <Layout
-                    selectedStake={selectedStake}
-                    setSelectedStake={setSelectedStake}
-                    isSidebarOpen={isSidebarOpen}
-                    setIsSidebarOpen={setIsSidebarOpen}
-                    selectedMenu={selectedMenu}
-                    setSelectedMenu={setSelectedMenu}
-                    activeMenu={activeMenu}
-                    setActiveMenu={setActiveMenu}
-                    onFilterApply={handleFilterApply}
-                >
-                    <ContextProvider>
-                        <Component
-                            {...pageProps}
-                            selectedStake={selectedStake}
-                            participantType={participantType}
-                            setParticipantType={setParticipantType}
-                            activeMenu={activeMenu}
-                            setActiveMenu={setActiveMenu}
-                            participantsData={participantsData}
-                            counselorsData={counselorsData}
-                        />
-                    </ContextProvider>
-                </Layout>
-            </CompanyFilterProvider>
-        </SessionProvider>
+                        duration: 4000,
+                    },
+                }}
+            />
+            <Layout
+                selectedStake={selectedStake}
+                setSelectedStake={setSelectedStake}
+                isSidebarOpen={isSidebarOpen}
+                setIsSidebarOpen={setIsSidebarOpen}
+                selectedMenu={selectedMenu}
+                setSelectedMenu={setSelectedMenu}
+                activeMenu={activeMenu}
+                setActiveMenu={setActiveMenu}
+                onFilterApply={handleFilterApply}
+            >
+                <ContextProvider>
+                    <Component
+                        {...pageProps}
+                        selectedStake={selectedStake}
+                        participantType={participantType}
+                        setParticipantType={setParticipantType}
+                        activeMenu={activeMenu}
+                        setActiveMenu={setActiveMenu}
+                        participantsData={participantsData}
+                        counselorsData={counselorsData}
+                    />
+                </ContextProvider>
+            </Layout>
+        </CompanyFilterProvider>
     );
 }
