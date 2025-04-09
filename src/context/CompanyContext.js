@@ -1,7 +1,7 @@
 // src/contexts/CompanyContext.js
 import React, { createContext, useContext, useState } from 'react';
 
-const ParticipantContext = createContext();
+export const CompanyContext = createContext();
 
 export function CompanyProvider({ children }) {
     const [companys, setCompanys] = useState([]);
@@ -14,7 +14,7 @@ export function CompanyProvider({ children }) {
 
     return (
         <CompanyContext.Provider value={{ 
-            companies, 
+            companies: companys, 
             setCompanys: updateCompanys,
             loading,
             setLoading
