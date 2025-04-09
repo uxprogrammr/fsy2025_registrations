@@ -16,6 +16,7 @@ export default function RegistrantModal({ isOpen, onClose, registrants }) {
                                 <th className="py-1 px-2 text-left text-sm">Gender</th>
                                 <th className="py-1 px-2 text-left text-sm">Phone Number</th>
                                 <th className="py-1 px-2 text-left text-sm">Email Address</th>
+                                <th className="py-1 px-2 text-left text-sm">Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -26,6 +27,7 @@ export default function RegistrantModal({ isOpen, onClose, registrants }) {
                                     <td className="py-1 px-2 text-gray-800 text-sm">{reg.gender}</td>
                                     <td className="py-1 px-2 text-gray-800 text-sm">{reg.phone_number}</td>
                                     <td className="py-1 px-2 text-gray-800 text-sm">{reg.email}</td>
+                                    <td className="py-1 px-2 text-gray-800 text-sm">{reg.status}</td>
                                 </tr>
                             ))}
                         </tbody>
