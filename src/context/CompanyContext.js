@@ -1,21 +1,21 @@
 // src/contexts/CompanyContext.js
 import React, { createContext, useContext, useState } from 'react';
 
-export const CompanyContext = createContext();
+const CompanyContext = createContext();
 
 export function CompanyProvider({ children }) {
-    const [companys, setCompanys] = useState([]);
+    const [companies, setCompanies] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const updateCompanys = (data) => {
+    const updateCompanies = (data) => {
         console.log('Updating companies in context with:', data);
-        setCompanys(Array.isArray(data) ? data : []);
+        setCompanies(Array.isArray(data) ? data : []);
     };
 
     return (
         <CompanyContext.Provider value={{ 
-            companies: companys, 
-            setCompanys: updateCompanys,
+            companies, 
+            setCompanies: updateCompanies,
             loading,
             setLoading
         }}>
@@ -24,10 +24,10 @@ export function CompanyProvider({ children }) {
     );
 }
 
-export function useCompanys() {
+export function useCompanies() {
     const context = useContext(CompanyContext);
     if (!context) {
-        throw new Error('useCompanys must be used within a CompanyProvider');
+        throw new Error('useCompanies must be used within a CompanyProvider');
     }
     return context;
 }
