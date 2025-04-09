@@ -98,15 +98,6 @@ export default function Login() {
                 >
                     Login
                 </button>
-
-                <div className="mt-4 flex justify-between">
-                    <Link href="/participant-signup" className="text-blue-500 hover:underline">
-                        Participant Sign Up
-                    </Link>
-                    <Link href="/counselor-signup" className="text-blue-500 hover:underline">
-                        Counselor Sign Up
-                    </Link>
-                </div>
             </div>
         </div>
     );
