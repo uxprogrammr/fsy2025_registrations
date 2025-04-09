@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from 'react';
 import { useRouter } from "next/router";
 import dynamic from 'next/dynamic';
 
@@ -16,7 +16,7 @@ import Menu from "../components/Menu";
 import '@/styles/global.css';
 
 export default function Home() {
-    const [selectedStake, setSelectedStake] = useState("All Stakes");
+    const [selectedStake, setSelectedStake] = useState('');
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [participantType, setParticipantType] = useState("Participant");
     const [selectedMenu, setSelectedMenu] = useState("Dashboard");
