@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DataTable from "@/components/DataTable";
 import ProtectedRoute from '@/components/ProtectedRoute';
-import '@/styles/global.css';
 
 export default function UnitsWithWaitingApproval() {
     const [ReportData, setReportData] = useState([]);
