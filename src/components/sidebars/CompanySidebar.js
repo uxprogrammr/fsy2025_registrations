@@ -105,7 +105,7 @@ export default function CompanySidebar() {
     };
 
     return (
-        <aside className="bg-white shadow-lg p-4 min-w-[250px] w-64">
+        <aside className="bg-white p-4 min-w-[250px] w-64">
             <h2 className="text-xl font-bold mb-4 text-gray-800">Company Filter</h2>
             
             {error && (

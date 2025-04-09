@@ -14,7 +14,7 @@ const reports = ["Units with Low Registrations", "Units with Waiting Approval"];
 
 export default function DashboardSidebar({ selectedStake, setSelectedStake, isSidebarOpen, setIsSidebarOpen, selectedMenu, setSelectedMenu }) {
     return (
-        <aside className={`bg-white shadow-lg p-4 transition-all duration-300 ${isSidebarOpen ? "min-w-[250px] w-64" : "min-w-[60px] w-20"} overflow-hidden`}>
+        <aside className={`bg-white p-4 transition-all duration-300 ${isSidebarOpen ? "min-w-[250px] w-64" : "min-w-[60px] w-20"} overflow-hidden`}>
             <button
                 className="mb-4 p-2 bg-gray-200 rounded-lg flex items-center justify-center"
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
