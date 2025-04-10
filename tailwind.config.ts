@@ -12,7 +12,11 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      fontFamily: {
+        sans: ['Arial', 'Helvetica', 'sans-serif'],
+      },
     },
   },
+  darkMode: 'class', // Enable class-based dark mode
   plugins: [],
 } satisfies Config;

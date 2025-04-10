@@ -8,7 +8,6 @@ export function CounselorProvider({ children }) {
     const [loading, setLoading] = useState(false);
 
     const updateCounselors = (data) => {
-        console.log('Updating counselors in context with:', data);
         setCounselors(Array.isArray(data) ? data : []);
     };
 

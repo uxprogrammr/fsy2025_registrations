@@ -6,7 +6,6 @@ export function CompanyFilterProvider({ children }) {
     const [filteredMembers, setFilteredMembers] = useState([]);
 
     const updateFilteredMembers = (result) => {
-        console.log('Updating filtered members:', result);
         if (result && result.success && result.data) {
             setFilteredMembers(result.data);
         }

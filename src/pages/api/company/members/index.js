@@ -57,8 +57,6 @@ async function getCompanyMembers(req, res) {
             r.last_name
         `;
 
-        console.log('Executing query:', sql, params);
-
         const results = await query(sql, params);
 
         return res.status(200).json({

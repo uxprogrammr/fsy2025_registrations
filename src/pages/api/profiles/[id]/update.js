@@ -32,12 +32,7 @@ export default async function handler(req, res) {
             WHERE fsy_id = ?
         `;
 
-        console.log('SQL Query:', sql); // Debug log
-        console.log('Values:', values); // Debug log
-
         const result = await query(sql, values);
-
-        console.log('Update result:', result); // Debug log
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ 
@@ -51,7 +46,6 @@ export default async function handler(req, res) {
             message: 'Profile updated successfully'
         });
     } catch (error) {
-        console.error('Error updating profile:', error);
         res.status(500).json({ 
             success: false, 
             message: 'Error updating profile data',

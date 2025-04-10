@@ -40,8 +40,6 @@ export default async function handler(req, res) {
             const sqlQuery = 'INSERT INTO users (full_name, email, phone_number, birth_date, password_hash, user_type) VALUES (?, ?, ?, ?, ?, ?)';
             const sqlValues = [fullName, email, mobileNumber, formattedBirthDate, hashedPin, 'Counselor'];
 
-            console.log('Executing SQL:', sqlQuery.replace(/\?/g, () => `'${sqlValues.shift()}'`));
-
             // Insert the counselor data into the users table
             const insertResult = await query(sqlQuery, [fullName, email, mobileNumber, formattedBirthDate, hashedPin, 'Participant']);
 

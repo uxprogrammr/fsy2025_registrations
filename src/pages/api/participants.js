@@ -30,11 +30,7 @@ export default async function handler(req, res) {
                 params.push(status);
             }
 
-            console.log('SQL Query:', sql); // Debug log
-            console.log('Parameters:', params); // Debug log
-
             const result = await query(sql, params);
-            console.log('Query result:', result); // Debug log
 
             res.status(200).json({ 
                 success: true, 
@@ -42,7 +38,6 @@ export default async function handler(req, res) {
                 debug: { sql, params } // Include debug info in development
             });
         } catch (error) {
-            console.error('Error fetching participants:', error);
             res.status(500).json({ 
                 success: false, 
                 message: 'Server error',

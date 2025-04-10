@@ -21,7 +21,6 @@ export default function CompanySidebar() {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const result = await response.json();
-                console.log('Companies API response:', result); // Debug log
                 
                 if (result.data && Array.isArray(result.data)) {
                     setCompanies(result.data);
@@ -83,14 +82,11 @@ export default function CompanySidebar() {
             }
 
             const queryString = params.toString();
-            console.log('Applying filters with params:', queryString);
             
             const url = `/api/company/members${queryString ? `?${queryString}` : ''}`;
             const response = await fetch(url);
             const result = await response.json();
             
-            console.log('Filter API response:', result);
-
             if (result.success) {
                 updateFilteredMembers(result);
             } else {
@@ -121,7 +117,6 @@ export default function CompanySidebar() {
                     value={selectedCompany}
                     onChange={(e) => {
                         const value = e.target.value;
-                        console.log('Selected company:', value); // Debug log
                         setSelectedCompany(value);
                         setSelectedGroup(''); // Reset group when company changes
                     }}
@@ -142,7 +137,6 @@ export default function CompanySidebar() {
                     value={selectedGroup}
                     onChange={(e) => {
                         const value = e.target.value;
-                        console.log('Selected group:', value); // Debug log
                         setSelectedGroup(value);
                     }}
                     disabled={!selectedCompany}

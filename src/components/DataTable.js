@@ -40,18 +40,6 @@ export function DataTable({
     const isSensitive = (header) =>
         header.toLowerCase().includes("phone") || header.toLowerCase().includes("email");
 
-    // Add hover effect to rows
-    const customStyles = {
-        rows: {
-            style: {
-                '&:hover': {
-                    backgroundColor: '#f3f4f6', // Light gray background on hover
-                    cursor: 'pointer',
-                },
-            },
-        },
-    };
-
     return (
         <div className="overflow-auto rounded-lg shadow">
             <table className="min-w-full bg-white border border-gray-200 text-sm">

@@ -40,7 +40,6 @@ async function getCompanyMember(req, res, id) {
             data: result[0]
         });
     } catch (error) {
-        console.error('Error fetching company member:', error);
         return res.status(500).json({
             success: false,
             message: 'Error fetching company member'
@@ -50,8 +49,6 @@ async function getCompanyMember(req, res, id) {
 
 async function deleteCompanyMember(req, res, id) {
     try {
-        console.log('Deleting company member:', id);
-
         const result = await query(`
             DELETE FROM company_members
             WHERE fsy_id = ?
@@ -69,7 +66,6 @@ async function deleteCompanyMember(req, res, id) {
             message: 'Member removed from company successfully'
         });
     } catch (error) {
-        console.error('Error deleting company member:', error);
         return res.status(500).json({
             success: false,
             message: 'Error removing member from company'

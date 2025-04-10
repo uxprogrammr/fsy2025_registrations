@@ -8,7 +8,6 @@ export function ParticipantProvider({ children }) {
     const [loading, setLoading] = useState(false);
 
     const updateParticipants = (data) => {
-        console.log('Updating participants in context with:', data);
         setParticipants(Array.isArray(data) ? data : []);
     };
 

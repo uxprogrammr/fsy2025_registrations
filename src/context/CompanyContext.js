@@ -8,7 +8,6 @@ export function CompanyProvider({ children }) {
     const [loading, setLoading] = useState(false);
 
     const updateCompanys = (data) => {
-        console.log('Updating companies in context with:', data);
         setCompanys(Array.isArray(data) ? data : []);
     };
 

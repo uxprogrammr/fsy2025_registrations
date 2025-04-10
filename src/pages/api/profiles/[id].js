@@ -8,16 +8,12 @@ export default async function handler(req, res) {
     const { id } = req.query;
 
     try {
-        console.log('Fetching profile with ID:', id);
-
         const result = await query(`
             SELECT *
             FROM registrations
             WHERE fsy_id = ?
             LIMIT 1
         `, [id]);
-
-        console.log('Query result:', result);
 
         if (result.length === 0) {
             return res.status(404).json({ 
@@ -31,7 +27,6 @@ export default async function handler(req, res) {
             data: result[0]
         });
     } catch (error) {
-        console.error('Error fetching profile:', error);
         res.status(500).json({ 
             success: false, 
             message: 'Error fetching profile data'

@@ -5,8 +5,6 @@ export default async function handler(req, res) {
 
     if (req.method === 'DELETE') {
         try {
-            console.log('Deleting company:', id);
-
             const result = await query(`
                 DELETE FROM companies
                 WHERE company_id = ?
@@ -24,7 +22,6 @@ export default async function handler(req, res) {
                 message: 'Company deleted successfully'
             });
         } catch (error) {
-            console.error('Error deleting company:', error);
             return res.status(500).json({
                 success: false,
                 message: 'Error deleting company'
@@ -37,8 +34,6 @@ export default async function handler(req, res) {
     }
 
     try {
-        console.log('Fetching groups for company:', id);
-
         const result = await query(`
             SELECT 
                 group_id,
@@ -50,14 +45,11 @@ export default async function handler(req, res) {
             ORDER BY group_number, group_name ASC
         `, [id]);
 
-        console.log('Found groups:', result.length);
-
         return res.status(200).json({
             success: true,
             data: result
         });
     } catch (error) {
-        console.error('Error fetching company groups:', error);
         return res.status(500).json({
             success: false,
             message: 'Error fetching company groups'
@@ -90,7 +82,6 @@ async function createCompanyGroup(req, res, companyId) {
             }
         });
     } catch (error) {
-        console.error('Error creating company group:', error);
         return res.status(500).json({
             success: false,
             message: 'Error creating company group'

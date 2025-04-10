@@ -3,7 +3,6 @@ import { query } from '@/lib/db';
 export default async function handler(req, res) {
     if (req.method === 'GET') {
         const { stake_name, unit_name, status } = req.query;
-        console.log('[DEBUG] API - Query params:', req.query);
         
         try {
             let sql = `
@@ -31,11 +30,7 @@ export default async function handler(req, res) {
                 params.push(status);
             }
 
-            console.log('[DEBUG] API - SQL:', sql);
-            console.log('[DEBUG] API - Params:', params);
-
             const result = await query(sql, params);
-            console.log('[DEBUG] API - Result count:', result.length);
 
             res.status(200).json({ 
                 success: true, 
@@ -43,7 +38,6 @@ export default async function handler(req, res) {
                 debug: { sql, params } // Include debug info in development
             });
         } catch (error) {
-            console.error('[DEBUG] API - Error:', error);
             res.status(500).json({ 
                 success: false, 
                 message: 'Server error',

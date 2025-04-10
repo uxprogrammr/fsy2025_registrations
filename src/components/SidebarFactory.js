@@ -5,9 +5,6 @@ import ParticipantSidebar from "./sidebars/ParticipantSidebar";
 import CompanySidebar from "./sidebars/CompanySidebar";
 
 export default function SidebarFactory({ currentPage, onApplyFilter, ...props }) {
-    // Add console log to debug
-    console.log('SidebarFactory props:', { currentPage, hasOnApplyFilter: !!onApplyFilter });
-
     switch (currentPage) {
         case "dashboard":
             return <DashboardSidebar {...props} />;
