@@ -10,7 +10,7 @@ export default function Layout({ children, selectedStake, setSelectedStake, isSi
     const currentPage = router.pathname.split('/')[1]; // Get the current page from the URL
 
     // Check if the current page requires authentication
-    const noAuthPages = ["/login", "/counselor-signup", "/participant-signup"];
+    const noAuthPages = ["/login"];
     const isAuthenticated = !noAuthPages.includes(router.pathname);
 
     // Add console log to debug
