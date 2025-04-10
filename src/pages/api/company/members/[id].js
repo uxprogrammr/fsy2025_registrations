@@ -1,12 +1,19 @@
 import { query } from '@/lib/db';
 
 export default async function handler(req, res) {
-    if (req.method !== 'GET') {
-        return res.status(405).json({ message: 'Method not allowed' });
-    }
-
     const { id } = req.query; // Using 'id' consistently as the route parameter
 
+    switch (req.method) {
+        case 'GET':
+            return getCompanyMember(req, res, id);
+        case 'DELETE':
+            return deleteCompanyMember(req, res, id);
+        default:
+            return res.status(405).json({ message: 'Method not allowed' });
+    }
+}
+
+async function getCompanyMember(req, res, id) {
     try {
         const result = await query(`
             SELECT 
@@ -37,6 +44,35 @@ export default async function handler(req, res) {
         return res.status(500).json({
             success: false,
             message: 'Error fetching company member'
+        });
+    }
+}
+
+async function deleteCompanyMember(req, res, id) {
+    try {
+        console.log('Deleting company member:', id);
+
+        const result = await query(`
+            DELETE FROM company_members
+            WHERE fsy_id = ?
+        `, [id]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Company member not found'
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: 'Member removed from company successfully'
+        });
+    } catch (error) {
+        console.error('Error deleting company member:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error removing member from company'
         });
     }
 }

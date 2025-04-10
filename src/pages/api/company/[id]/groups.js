@@ -3,6 +3,35 @@ import { query } from '@/lib/db';
 export default async function handler(req, res) {
     const { id } = req.query;
 
+    if (req.method === 'DELETE') {
+        try {
+            console.log('Deleting company:', id);
+
+            const result = await query(`
+                DELETE FROM companies
+                WHERE company_id = ?
+            `, [id]);
+
+            if (result.affectedRows === 0) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Company not found'
+                });
+            }
+
+            return res.status(200).json({
+                success: true,
+                message: 'Company deleted successfully'
+            });
+        } catch (error) {
+            console.error('Error deleting company:', error);
+            return res.status(500).json({
+                success: false,
+                message: 'Error deleting company'
+            });
+        }
+    }
+
     if (req.method !== 'GET') {
         return res.status(405).json({ message: 'Method not allowed' });
     }
