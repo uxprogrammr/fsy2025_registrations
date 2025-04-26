@@ -37,7 +37,7 @@ async function getCompanyMembers(req, res) {
             JOIN registrations r ON cm.fsy_id = r.fsy_id
             JOIN companies c ON cm.company_id = c.company_id
             JOIN companies_groups cg ON cm.group_id = cg.group_id
-            WHERE cm.company_id = ?
+            WHERE cm.company_id = ? AND r.status <> 'Cancelled'
         `;
 
         const params = [company_id];
