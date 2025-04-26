@@ -67,7 +67,7 @@ export default function Login() {
                 {error && <p className="text-red-500 mb-4">{error}</p>}
                 <input
                     type="text"
-                    placeholder="Phone Number"
+                    placeholder="Email or Phone Number"
                     className="w-full p-2 mb-4 border rounded text-gray-900"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
