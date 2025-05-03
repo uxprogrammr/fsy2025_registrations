@@ -35,7 +35,7 @@ export default async function handler(req, res) {
                 WHERE 
                     cm.fsy_id IS NULL
                     AND r.fsy_id = ?
-                    AND r.status = 'Approved'
+                    AND (r.status = 'Approved' OR r.status = 'Awaiting Approval')
                 ORDER BY r.first_name, r.last_name
                 LIMIT 100
             `, [numericTerm]);
@@ -69,7 +69,7 @@ export default async function handler(req, res) {
                     OR r.stake_name LIKE ?
                     OR r.unit_name LIKE ?
                 )
-                AND r.status = 'Approved'
+                AND (r.status = 'Approved' OR r.status = 'Awaiting Approval')
             ORDER BY r.first_name, r.last_name
             LIMIT 100
         `, [searchTerm, searchTerm, searchTerm]);

@@ -37,7 +37,7 @@ async function getCompanyMembers(req, res) {
             JOIN registrations r ON cm.fsy_id = r.fsy_id
             JOIN companies c ON cm.company_id = c.company_id
             JOIN companies_groups cg ON cm.group_id = cg.group_id
-            WHERE cm.company_id = ? AND r.status <> 'Cancelled'
+            WHERE cm.company_id = ? AND (r.status = 'Approved' OR r.status = 'Awaiting Approval')
         `;
 
         const params = [company_id];
@@ -97,12 +97,12 @@ async function addCompanyMember(req, res) {
             });
         }
 
-        if (member.status !== 'Approved') {
-            return res.status(400).json({
-                success: false,
-                message: 'Only approved members can be added to a company'
-            });
-        }
+        // if (member.status !== 'Approved') {
+        //     return res.status(400).json({
+        //         success: false,
+        //         message: 'Only approved members can be added to a company'
+        //     });
+        // }
 
         // Check if member is already in a company
         const [existingMember] = await query(

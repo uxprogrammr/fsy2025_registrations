@@ -35,7 +35,7 @@ export default async function handler(req, res) {
                     CONCAT(r.first_name, ' ', r.last_name) LIKE ? OR
                     r.stake_name LIKE ?
                 )
-                AND r.status = 'Approved'
+                AND r.status <> 'Cancelled'
             ORDER BY r.first_name, r.last_name
         `, [searchTerm, searchTerm, searchTerm]);
 
