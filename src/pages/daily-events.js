@@ -97,19 +97,29 @@ export default function DailyEvents() {
         });
     };
 
+    // Helper to convert 'HH:mm' or 'HH:mm:ss' to minutes since midnight
+    const timeToMinutes = (timeStr) => {
+        if (!timeStr) return 0;
+        const [h, m] = timeStr.split(':');
+        return parseInt(h, 10) * 60 + parseInt(m, 10);
+    };
+
     const groupEventsByDay = (events) => {
         const grouped = {};
         for (let i = 1; i <= 5; i++) {
             grouped[i] = {
-                morning: events.filter(e => e.day_number === i && e.start_time < '12:00'),
-                afternoon: events.filter(e => e.day_number === i && e.start_time >= '12:00' && e.start_time < '17:00'),
-                evening: events.filter(e => e.day_number === i && e.start_time >= '17:00')
+                morning: events.filter(e => e.day_number === i && timeToMinutes(e.start_time) < 12 * 60),
+                afternoon: events.filter(e => e.day_number === i && timeToMinutes(e.start_time) >= 12 * 60 && timeToMinutes(e.start_time) < 17 * 60),
+                evening: events.filter(e => e.day_number === i && timeToMinutes(e.start_time) >= 17 * 60 && timeToMinutes(e.start_time) < 22 * 60),
+                night: events.filter(e => e.day_number === i && timeToMinutes(e.start_time) >= 22 * 60)
             };
         }
         return grouped;
     };
 
     const groupedEvents = groupEventsByDay(events);
+
+    console.log('Grouped Events:', groupedEvents);
 
     const toggleDay = (day) => {
         setExpandedDays(prev => ({
@@ -159,19 +169,16 @@ export default function DailyEvents() {
                                 </div>
 
                                 {/* Collapsible Content */}
-                                <div 
-                                    className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                                        expandedDays[day] ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
-                                    }`}
-                                >
+                                <div className="">
                                     <div className="p-4 pt-0">
                                         <div className="grid gap-3">
-                                            {['morning', 'afternoon', 'evening'].map((period) => (
+                                            {['morning', 'afternoon', 'evening', 'night'].map((period) => (
                                                 <div key={period}>
                                                     <h3 className={`text-base font-semibold mb-2 ${
                                                         period === 'morning' ? 'text-blue-600' :
                                                         period === 'afternoon' ? 'text-yellow-600' :
-                                                        'text-purple-600'
+                                                        period === 'evening' ? 'text-purple-600' :
+                                                        'text-gray-700'
                                                     }`}>
                                                         {period.charAt(0).toUpperCase() + period.slice(1)}
                                                     </h3>
