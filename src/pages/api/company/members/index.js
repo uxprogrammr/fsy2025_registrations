@@ -32,15 +32,17 @@ async function getCompanyMembers(req, res) {
                 r.stake_name,
                 r.unit_name,
                 c.company_name,
-                cg.group_name
+                cg.group_name,
+                COALESCE(a.attendance_status, 'Not Set') as attendance_status
             FROM company_members cm
             JOIN registrations r ON cm.fsy_id = r.fsy_id
             JOIN companies c ON cm.company_id = c.company_id
             JOIN companies_groups cg ON cm.group_id = cg.group_id
+            LEFT JOIN attendances a ON r.fsy_id = a.fsy_id AND a.event_id = ?
             WHERE cm.company_id = ? AND (r.status = 'Approved' OR r.status = 'Awaiting Approval')
         `;
 
-        const params = [company_id];
+        const params = [req.query.event_id || 0, company_id];
 
         if (group_id) {
             sql += ` AND cm.group_id = ?`;

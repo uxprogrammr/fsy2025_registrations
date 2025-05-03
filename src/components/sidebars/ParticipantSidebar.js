@@ -83,7 +83,7 @@ export default function ParticipantSidebar({ onApplyFilter }) {
             const queryString = params.toString();
             console.log('Applying filters with params:', queryString);
             
-            const url = `/api/participants${queryString ? `?${queryString}` : ''}`;
+            const url = `/api/participants/filter${queryString ? `?${queryString}` : ''}`;
             const response = await fetch(url);
             const result = await response.json();
             
