@@ -26,6 +26,7 @@ export default function Layout({ children, selectedStake, setSelectedStake, isSi
         { label: 'Company', path: '/company' },
         { label: 'Daily Events', path: '/daily-events' },
         { label: 'Attendances', path: '/attendances' },
+        { label: 'Rooms', path: '/rooms' },
         {
             label: 'Reports',
             subItems: [
