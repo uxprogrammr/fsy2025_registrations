@@ -21,8 +21,7 @@ export default function Layout({ children, selectedStake, setSelectedStake, isSi
 
     const menuItems = [
         { label: 'Home', path: '/dashboard' },
-        { label: 'Participants', path: '/participants' },
-        { label: 'Counselors', path: '/counselors' },
+        { label: 'Members', path: '/members' },
         { label: 'Company', path: '/company' },
         { label: 'Daily Events', path: '/daily-events' },
         { label: 'Attendances', path: '/attendances' },

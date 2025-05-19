@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 
-export default function CounselorSidebar({ onApplyFilter }) {
+export default function MemberSidebar({ onApplyFilter }) {
     const [stakes, setStakes] = useState([]);
     const [units, setUnits] = useState([]);
     const [selectedStake, setSelectedStake] = useState('');
     const [selectedUnit, setSelectedUnit] = useState('');
     const [registrationStatus, setRegistrationStatus] = useState('');
+    const [participantType, setParticipantType] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -20,7 +21,7 @@ export default function CounselorSidebar({ onApplyFilter }) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const result = await response.json();
-                console.log('Stakes API response:', result); // Debug log
+                console.log('Stakes API response:', result);
                 
                 if (result.data && Array.isArray(result.data)) {
                     setStakes(result.data);
@@ -79,26 +80,29 @@ export default function CounselorSidebar({ onApplyFilter }) {
             if (registrationStatus && registrationStatus !== '') {
                 params.append('status', registrationStatus);
             }
+            if (participantType && participantType !== '') {
+                params.append('participant_type', participantType);
+            }
 
             const queryString = params.toString();
-            console.log('[DEBUG] CounselorSidebar - Filter params:', queryString);
+            console.log('[DEBUG] MemberSidebar - Filter params:', queryString);
             
-            const url = `/api/counselors${queryString ? `?${queryString}` : ''}`;
-            console.log('[DEBUG] CounselorSidebar - API URL:', url);
+            const url = `/api/members${queryString ? `?${queryString}` : ''}`;
+            console.log('[DEBUG] MemberSidebar - API URL:', url);
             
             const response = await fetch(url);
             const result = await response.json();
             
-            console.log('[DEBUG] CounselorSidebar - API Response:', result);
+            console.log('[DEBUG] MemberSidebar - API Response:', result);
 
             if (typeof onApplyFilter === 'function') {
-                console.log('[DEBUG] CounselorSidebar - Calling onApplyFilter');
+                console.log('[DEBUG] MemberSidebar - Calling onApplyFilter');
                 onApplyFilter(result);
             } else {
-                console.warn('[DEBUG] CounselorSidebar - onApplyFilter is not a function');
+                console.warn('[DEBUG] MemberSidebar - onApplyFilter is not a function');
             }
         } catch (error) {
-            console.error('[DEBUG] CounselorSidebar - Error:', error);
+            console.error('[DEBUG] MemberSidebar - Error:', error);
             setError('Failed to apply filters. Please try again.');
         } finally {
             setLoading(false);
@@ -107,7 +111,7 @@ export default function CounselorSidebar({ onApplyFilter }) {
 
     return (
         <aside className="bg-white shadow-lg p-4 min-w-[250px] w-64">
-            <h2 className="text-xl font-bold mb-4 text-gray-800">Counselors Filter</h2>
+            <h2 className="text-xl font-bold mb-4 text-gray-800">Members Filter</h2>
             
             {error && (
                 <div className="mb-4 p-2 bg-red-100 border border-red-400 text-red-700 rounded">
@@ -116,15 +120,33 @@ export default function CounselorSidebar({ onApplyFilter }) {
             )}
             
             <div className="mb-4">
+                <label className="block mb-1 text-gray-700">Participant Type</label>
+                <select
+                    className="w-full p-2 border rounded text-gray-800"
+                    value={participantType}
+                    onChange={(e) => {
+                        const value = e.target.value;
+                        console.log('Selected participant type:', value);
+                        setParticipantType(value);
+                    }}
+                >
+                    <option value="">All Types</option>
+                    <option value="Participant">Participant</option>
+                    <option value="Counselor">Counselor</option>
+                    <option value="Assistant Coordinator">Assistant Coordinator</option>
+                </select>
+            </div>
+
+            <div className="mb-4">
                 <label className="block mb-1 text-gray-700">Stake Name</label>
                 <select
                     className="w-full p-2 border rounded text-gray-800"
                     value={selectedStake}
                     onChange={(e) => {
                         const value = e.target.value;
-                        console.log('Selected stake:', value); // Debug log
+                        console.log('Selected stake:', value);
                         setSelectedStake(value);
-                        setSelectedUnit(''); // Reset unit when stake changes
+                        setSelectedUnit('');
                     }}
                 >
                     <option value="">All Stakes</option>
@@ -143,7 +165,7 @@ export default function CounselorSidebar({ onApplyFilter }) {
                     value={selectedUnit}
                     onChange={(e) => {
                         const value = e.target.value;
-                        console.log('Selected unit:', value); // Debug log
+                        console.log('Selected unit:', value);
                         setSelectedUnit(value);
                     }}
                     disabled={!selectedStake}
@@ -164,7 +186,7 @@ export default function CounselorSidebar({ onApplyFilter }) {
                     value={registrationStatus}
                     onChange={(e) => {
                         const value = e.target.value;
-                        console.log('Selected status:', value); // Debug log
+                        console.log('Selected status:', value);
                         setRegistrationStatus(value);
                     }}
                 >
@@ -188,4 +210,4 @@ export default function CounselorSidebar({ onApplyFilter }) {
             </button>
         </aside>
     );
-}
+} 

@@ -35,7 +35,7 @@ export default function MyApp({ Component, pageProps }) {
             const pagePrefix = router.pathname.split('/')[1];
             if (pagePrefix === 'participants') {
                 setParticipantsData(filterResult.data);
-            } else if (pagePrefix === 'counselors') {
+            } else if (pagePrefix === 'members') {
                 setCounselorsData(filterResult.data);
             }
         }

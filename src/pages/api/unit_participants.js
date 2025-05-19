@@ -9,7 +9,7 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: "Missing participant type parameter" });
         }
 
-        if (participant_type !== "Participant" && participant_type !== "Counselor") {
+        if (participant_type !== "Participant" && participant_type !== "Counselor" && participant_type !== "Assistant Coordinator") {
             return res.status(400).json({ error: "Invalid participant type parameter" });
         }
 

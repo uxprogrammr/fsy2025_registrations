@@ -267,7 +267,7 @@ export default function Profile() {
 
         // Render Type as a ComboBox (Select)
         if (field === 'participant_type') {
-            const statuses = ["Participant", "Counselor"];
+            const statuses = ["Participant", "Counselor", "Assistant Coordinator"];
             return (
                 <div className="mb-2">
                     <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>

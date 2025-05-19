@@ -61,6 +61,17 @@ export default function Dashboard({ selectedStake, participantType, setParticipa
                             />
                             Counselor
                         </label>
+                        <label className="flex items-center text-gray-700">
+                            <input
+                                type="radio"
+                                name="participantType"
+                                value="Assistant Coordinator"
+                                checked={participantType === "Assistant Coordinator"}
+                                onChange={(e) => setParticipantType(e.target.value)}
+                                className="mr-2"
+                            />
+                            Assistant Coordinator
+                        </label>
                     </div>
                 </div>
 

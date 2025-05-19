@@ -3,19 +3,26 @@ import { useRouter } from 'next/router';
 import DataTable from "@/components/DataTable";
 import ProtectedRoute from '@/components/ProtectedRoute';
 
-export default function Counselors({ counselorsData }) {
-    const [counselors, setCounselors] = useState([]);
+export default function Members({ counselorsData }) {
+    const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [searching, setSearching] = useState(false);
     const router = useRouter();
 
-    // Update counselors when filtered data changes
+    // Update members when filtered data changes
     useEffect(() => {
         if (Array.isArray(counselorsData)) {
-            setCounselors(counselorsData);
+            setMembers(counselorsData);
         }
     }, [counselorsData]);
+
+    // Handle filter changes from the sidebar
+    const handleFilterApply = (filteredData) => {
+        if (filteredData && filteredData.success) {
+            setMembers(filteredData.data);
+        }
+    };
 
     const handleSearch = async (e) => {
         e.preventDefault(); // Prevent form submission default behavior
@@ -36,10 +43,10 @@ export default function Counselors({ counselorsData }) {
                     router.push(`/profile/${result.data[0].fsy_id}`);
                 } else if (result.data.length >= 1) {
                     // Multiple matches - update table
-                    setCounselors(result.data);
+                    setMembers(result.data);
                 } else {
                     // No matches
-                    setCounselors([]);
+                    setMembers([]);
                 }
             }
         } catch (error) {
@@ -67,24 +74,25 @@ export default function Counselors({ counselorsData }) {
     };
 
     const handleExportCSV = () => {
-        if (!counselors.length) return;
+        if (!members.length) return;
 
         // Define CSV headers
         const headers = [
             'FSY ID', 'Full Name', 'Gender', 'Phone Number', 
-            'Email', 'Stake Name', 'Unit Name', 'Status'
+            'Email', 'Stake Name', 'Unit Name', 'Participant Type', 'Status'
         ];
 
-        // Map counselor data to CSV format
-        const csvData = counselors.map(counselor => [
-            counselor.fsy_id,
-            counselor.full_name,
-            counselor.gender,
-            counselor.phone_number,
-            counselor.email,
-            counselor.stake_name,
-            counselor.unit_name,
-            counselor.status
+        // Map member data to CSV format
+        const csvData = members.map(member => [
+            member.fsy_id,
+            member.full_name,
+            member.gender,
+            member.phone_number,
+            member.email,
+            member.stake_name,
+            member.unit_name,
+            member.participant_type,
+            member.status
         ]);
 
         const csvContent = [
@@ -95,7 +103,7 @@ export default function Counselors({ counselorsData }) {
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.setAttribute('download', `counselors_export_${new Date().toISOString().split('T')[0]}.csv`);
+        link.setAttribute('download', `members_export_${new Date().toISOString().split('T')[0]}.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -109,6 +117,7 @@ export default function Counselors({ counselorsData }) {
         { name: 'Email', selector: row => row.email, sortable: true },
         { name: 'Stake Name', selector: row => row.stake_name, sortable: true },
         { name: 'Unit Name', selector: row => row.unit_name, sortable: true },
+        { name: 'Participant Type', selector: row => row.participant_type, sortable: true },
         { name: 'Status', selector: row => row.status, sortable: true },
     ];
 
@@ -117,7 +126,7 @@ export default function Counselors({ counselorsData }) {
             <div className="flex">
                 <div className="flex-1 p-4">
                     <div className="flex justify-between items-center mb-6">
-                        <h1 className="text-xl font-bold">Counselors</h1>
+                        <h1 className="text-xl font-bold">Members</h1>
                     </div>
 
                     {/* Search and Export Controls */}
@@ -148,9 +157,9 @@ export default function Counselors({ counselorsData }) {
                             </button>
                             <button
                                 onClick={handleExportCSV}
-                                disabled={!counselors.length}
+                                disabled={!members.length}
                                 className={`h-9 px-4 rounded text-sm ${
-                                    !counselors.length
+                                    !members.length
                                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                         : 'bg-green-500 hover:bg-green-600 text-white cursor-pointer'
                                 } inline-flex items-center gap-2`}
@@ -161,17 +170,17 @@ export default function Counselors({ counselorsData }) {
                     </div>
                     
                     {loading || searching ? (
-                        <p className="text-gray-700">Loading counselors...</p>
-                    ) : counselors && counselors.length > 0 ? (
+                        <p className="text-gray-700">Loading members...</p>
+                    ) : members && members.length > 0 ? (
                         <DataTable 
-                            data={counselors}
+                            data={members}
                             columns={columns}
                             getMenuItems={getMenuItems}
                             onRowDoubleClick={handleRowDoubleClick}
                         />
                     ) : (
                         <div>
-                            <p className="text-gray-700">No counselors found</p>
+                            <p className="text-gray-700">No members found</p>
                             <p className="text-sm text-gray-500">
                                 Try different search terms or use the filters
                             </p>
@@ -182,3 +191,23 @@ export default function Counselors({ counselorsData }) {
         </ProtectedRoute>
     );
 }
+
+export async function getServerSideProps() {
+    try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/members`);
+        const result = await response.json();
+
+        return {
+            props: {
+                counselorsData: result.success ? result.data : []
+            }
+        };
+    } catch (error) {
+        console.error('Error fetching members:', error);
+        return {
+            props: {
+                counselorsData: []
+            }
+        };
+    }
+} 

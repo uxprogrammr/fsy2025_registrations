@@ -1,15 +1,21 @@
 import { query } from '@/lib/db';
 
 export default async function handler(req, res) {
+    // Set cache control headers to prevent caching
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+
     if (req.method === 'GET') {
-        const { stake_name, unit_name, status } = req.query;
+        const { stake_name, unit_name, status, participant_type } = req.query;
         
         try {
             let sql = `
                 SELECT fsy_id, concat(first_name, " ", last_name) as full_name, 
-                    gender, phone_number, email, stake_name, unit_name, status
+                    gender, phone_number, email, stake_name, unit_name, status,
+                    participant_type
                 FROM registrations 
-                WHERE participant_type = 'Counselor'
+                WHERE 1=1
             `;
             
             const params = [];
@@ -30,6 +36,11 @@ export default async function handler(req, res) {
                 params.push(status);
             }
 
+            if (participant_type && participant_type !== '') {
+                sql += ` AND participant_type = ?`;
+                params.push(participant_type);
+            }
+
             const result = await query(sql, params);
 
             res.status(200).json({ 
@@ -47,4 +58,4 @@ export default async function handler(req, res) {
     } else {
         res.status(405).json({ message: 'Method not allowed' });
     }
-}
+} 
