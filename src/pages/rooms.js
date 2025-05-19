@@ -99,6 +99,12 @@ export default function Rooms() {
             if (data.success) {
                 setParticipants(data.data);
                 setSelectedRoom(rooms.find(room => room.room_name === roomName));
+                // Clear search and filters when opening modal
+                setSearchTerm("");
+                setSearchResults([]);
+                setCompanyName("");
+                setGroupName("");
+                setGroupOptions([]);
                 setIsModalOpen(true);
             }
         } catch (error) {
