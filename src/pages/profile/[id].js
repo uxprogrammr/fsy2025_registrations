@@ -16,6 +16,22 @@ export default function Profile() {
     const [showQR, setShowQR] = useState(false);
     const [integrityIssues, setIntegrityIssues] = useState([]);
     const [registrationStatus, setRegistrationStatus] = useState('');
+    const [rooms, setRooms] = useState([]);
+
+    useEffect(() => {
+        async function fetchRooms() {
+            try {
+                const response = await fetch('/api/rooms');
+                const result = await response.json();
+                if (result.success) {
+                    setRooms(result.data);
+                }
+            } catch (error) {
+                console.error('Error fetching rooms:', error);
+            }
+        }
+        fetchRooms();
+    }, []);
 
     useEffect(() => {
         async function fetchParticipant() {
@@ -87,6 +103,7 @@ export default function Profile() {
             dietary_information: participant.dietary_information,
             participant_type: participant.participant_type,
             status: participant.status,
+            room_name: participant.room_name,
             // Exclude Church Information fields here
         };
     
@@ -275,6 +292,32 @@ export default function Profile() {
             );
         }
 
+        // Render Room Name as a ComboBox (Select)
+        if (field === 'room_name') {
+            return (
+                <div className="mb-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+                    {isEditing ? (
+                        <select
+                            value={editedData[field] !== undefined ? editedData[field] : participant[field] || ''}
+                            onChange={(e) => handleChange(field, e.target.value)}
+                            className="w-full px-3 py-2 text-black bg-white border border-gray-300 rounded"
+                        >
+                            <option value="">Select Room</option>
+                            {rooms.map((room) => (
+                                <option key={room.room_id} value={room.room_name}>
+                                    {room.room_name} {room.location ? `(${room.location})` : ''}
+                                </option>
+                            ))}
+                        </select>
+                    ) : (
+                        <div className="text-gray-900 px-3 py-2 bg-gray-50 border border-gray-300 rounded">
+                            {participant[field] || 'Not provided'}
+                        </div>
+                    )}
+                </div>
+            );
+        }
     
         // Default field rendering
         return (
@@ -666,6 +709,9 @@ export default function Profile() {
                                         </div>
                                         <div>
                                             {renderField('Type', 'participant_type')}
+                                        </div>
+                                        <div>
+                                            {renderField('Room Name', 'room_name')}
                                         </div>
                                     </div>
                                 </div>
