@@ -144,9 +144,10 @@ export default function Rooms() {
             });
             const data = await response.json();
             if (data.success) {
-                // Refresh participants in room
-                handleRoomClick(selectedRoom.room_name);
-                // Refresh rooms list to update participant count
+                // Update participants list without refreshing search results
+                const updatedParticipants = [...participants, searchResults.find(p => p.fsy_id === fsy_id)];
+                setParticipants(updatedParticipants);
+                // Update rooms list to update participant count
                 fetchRooms();
             }
         } catch (error) {
@@ -163,9 +164,10 @@ export default function Rooms() {
             });
             const data = await response.json();
             if (data.success) {
-                // Refresh participants in room
-                handleRoomClick(selectedRoom.room_name);
-                // Refresh rooms list to update participant count
+                // Update participants list without refreshing search results
+                const updatedParticipants = participants.filter(p => p.fsy_id !== fsy_id);
+                setParticipants(updatedParticipants);
+                // Update rooms list to update participant count
                 fetchRooms();
             }
         } catch (error) {
