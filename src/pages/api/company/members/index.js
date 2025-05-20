@@ -99,6 +99,13 @@ async function addCompanyMember(req, res) {
             });
         }
 
+        // if (member.status !== 'Approved') {
+        //     return res.status(400).json({
+        //         success: false,
+        //         message: 'Only approved members can be added to a company'
+        //     });
+        // }
+
         // Check if member is already in a company
         const [existingMember] = await query(
             'SELECT company_id FROM company_members WHERE fsy_id = ?',
