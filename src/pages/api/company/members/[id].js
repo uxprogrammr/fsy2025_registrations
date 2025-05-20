@@ -1,7 +1,7 @@
 import { query } from '@/lib/db';
 
 export default async function handler(req, res) {
-    const { id } = req.query; // Using 'id' consistently as the route parameter
+    const { id } = req.query;
 
     switch (req.method) {
         case 'GET':
@@ -49,22 +49,42 @@ async function getCompanyMember(req, res, id) {
 
 async function deleteCompanyMember(req, res, id) {
     try {
-        const result = await query(`
-            DELETE FROM company_members
-            WHERE fsy_id = ?
-        `, [id]);
+        // Start a transaction
+        await query('START TRANSACTION');
 
-        if (result.affectedRows === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'Company member not found'
+        try {
+            // Delete from company_members
+            const result = await query(`
+                DELETE FROM company_members
+                WHERE fsy_id = ?
+            `, [id]);
+
+            if (result.affectedRows === 0) {
+                await query('ROLLBACK');
+                return res.status(404).json({
+                    success: false,
+                    message: 'Company member not found'
+                });
+            }
+
+            // Clear company_name and group_name in registrations
+            await query(`
+                UPDATE registrations 
+                SET company_name = NULL, group_name = NULL 
+                WHERE fsy_id = ?
+            `, [id]);
+
+            // Commit the transaction
+            await query('COMMIT');
+
+            return res.status(200).json({
+                success: true,
+                message: 'Member removed from company successfully'
             });
+        } catch (error) {
+            await query('ROLLBACK');
+            throw error;
         }
-
-        return res.status(200).json({
-            success: true,
-            message: 'Member removed from company successfully'
-        });
     } catch (error) {
         return res.status(500).json({
             success: false,

@@ -99,13 +99,6 @@ async function addCompanyMember(req, res) {
             });
         }
 
-        // if (member.status !== 'Approved') {
-        //     return res.status(400).json({
-        //         success: false,
-        //         message: 'Only approved members can be added to a company'
-        //     });
-        // }
-
         // Check if member is already in a company
         const [existingMember] = await query(
             'SELECT company_id FROM company_members WHERE fsy_id = ?',
@@ -132,16 +125,45 @@ async function addCompanyMember(req, res) {
             });
         }
 
-        // Add member to company with group
-        await query(
-            'INSERT INTO company_members (company_id, fsy_id, group_id) VALUES (?, ?, ?)',
-            [company_id, fsy_id, group_id]
+        // Get company and group names
+        const [companyInfo] = await query(
+            'SELECT company_name FROM companies WHERE company_id = ?',
+            [company_id]
         );
 
-        return res.status(201).json({
-            success: true,
-            message: 'Member added successfully'
-        });
+        const [groupInfo] = await query(
+            'SELECT group_name FROM companies_groups WHERE group_id = ?',
+            [group_id]
+        );
+
+        // Start a transaction
+        await query('START TRANSACTION');
+
+        try {
+            // Add member to company with group
+            await query(
+                'INSERT INTO company_members (company_id, fsy_id, group_id) VALUES (?, ?, ?)',
+                [company_id, fsy_id, group_id]
+            );
+
+            // Update registrations table with company and group names
+            await query(
+                'UPDATE registrations SET company_name = ?, group_name = ? WHERE fsy_id = ?',
+                [companyInfo.company_name, groupInfo.group_name, fsy_id]
+            );
+
+            // Commit the transaction
+            await query('COMMIT');
+
+            return res.status(201).json({
+                success: true,
+                message: 'Member added successfully'
+            });
+        } catch (error) {
+            // Rollback in case of error
+            await query('ROLLBACK');
+            throw error;
+        }
     } catch (error) {
         console.error('Error adding company member:', error);
         return res.status(500).json({

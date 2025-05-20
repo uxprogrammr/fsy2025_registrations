@@ -212,8 +212,11 @@ export default function AddMembersModal({ isOpen, onClose }) {
             setLoading(true);
             const response = await fetch(`/api/company/members/${member.fsy_id}`, {
                 method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             });
-
+            
             const result = await response.json();
 
             if (!response.ok) {
@@ -506,13 +509,8 @@ export default function AddMembersModal({ isOpen, onClose }) {
                             })}
                         </tbody>
                     </table>
-                    {allMembers.length === 0 && !searching && (
-                        <div className="text-center py-4 text-gray-500">
-                            No members found. Try searching for members to add.
-                        </div>
-                    )}
                 </div>
             </div>
         </div>
     );
-} 
+}
