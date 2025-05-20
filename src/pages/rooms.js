@@ -144,9 +144,15 @@ export default function Rooms() {
             });
             const data = await response.json();
             if (data.success) {
-                // Update participants list without refreshing search results
-                const updatedParticipants = [...participants, searchResults.find(p => p.fsy_id === fsy_id)];
+                // Find the participant to add
+                const participantToAdd = searchResults.find(p => p.fsy_id === fsy_id);
+                // Add the participant with the correct room name
+                const updatedParticipants = [...participants, { ...participantToAdd, room_name: selectedRoom.room_name }];
                 setParticipants(updatedParticipants);
+                // Update search results to reflect the new room name
+                setSearchResults(searchResults.map(p => 
+                    p.fsy_id === fsy_id ? { ...p, room_name: selectedRoom.room_name } : p
+                ));
                 // Update rooms list to update participant count
                 fetchRooms();
             }
@@ -167,6 +173,10 @@ export default function Rooms() {
                 // Update participants list without refreshing search results
                 const updatedParticipants = participants.filter(p => p.fsy_id !== fsy_id);
                 setParticipants(updatedParticipants);
+                // Update search results to reflect the removed room name
+                setSearchResults(searchResults.map(p => 
+                    p.fsy_id === fsy_id ? { ...p, room_name: null } : p
+                ));
                 // Update rooms list to update participant count
                 fetchRooms();
             }
