@@ -191,6 +191,51 @@ export default function AddMembersModal({ isOpen, onClose }) {
             const result = await response.json();
 
             if (!response.ok) {
+                if (response.status === 409 && result.message === 'Member is already assigned to a company') {
+                    // Fetch current company and group info
+                    const currentInfoResponse = await fetch(`/api/company/members?company_id=${result.existingCompanyId}`);
+                    const currentInfo = await currentInfoResponse.json();
+                    const currentMember = currentInfo.data.find(m => m.fsy_id === member.fsy_id);
+
+                    // Get selected company and group names
+                    const selectedCompanyName = companies.find(c => c.company_id.toString() === selectedCompany)?.company_name;
+                    const selectedGroupName = groups.find(g => g.group_id.toString() === selectedGroup)?.group_name;
+
+                    // Show confirmation dialog with current and new company/group info
+                    const confirmTransfer = window.confirm(
+                        `This member is currently assigned to ${currentMember?.company_name || 'a company'} - ${currentMember?.group_name || 'a group'}.\n\n` +
+                        `Would you like to transfer them to ${selectedCompanyName} - ${selectedGroupName}?`
+                    );
+
+                    if (confirmTransfer) {
+                        // Proceed with transfer
+                        const transferResponse = await fetch('/api/company/members', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                fsy_id: member.fsy_id,
+                                company_id: parseInt(selectedCompany, 10),
+                                group_id: parseInt(selectedGroup, 10),
+                                transfer: true
+                            }),
+                        });
+
+                        const transferResult = await transferResponse.json();
+
+                        if (!transferResponse.ok) {
+                            throw new Error(transferResult.message || 'Failed to transfer member');
+                        }
+
+                        toast.success('Member transferred successfully');
+                        // Refresh company members list
+                        fetchCompanyMembers();
+                        // Remove from search results
+                        setSearchResults(searchResults.filter(m => m.fsy_id !== member.fsy_id));
+                    }
+                    return;
+                }
                 throw new Error(result.message || 'Failed to add member');
             }
 

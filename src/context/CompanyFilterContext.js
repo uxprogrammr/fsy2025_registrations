@@ -6,7 +6,10 @@ export function CompanyFilterProvider({ children }) {
     const [filteredMembers, setFilteredMembers] = useState([]);
 
     const updateFilteredMembers = (result) => {
-        if (result && result.success && result.data) {
+        // Handle both direct data array and result object with data property
+        if (Array.isArray(result)) {
+            setFilteredMembers(result);
+        } else if (result && result.data) {
             setFilteredMembers(result.data);
         }
     };

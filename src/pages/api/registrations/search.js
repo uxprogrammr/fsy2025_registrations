@@ -29,12 +29,15 @@ export default async function handler(req, res) {
                     r.status,
                     r.participant_type,
                     r.stake_name,
-                    r.unit_name
+                    r.unit_name,
+                    c.company_name,
+                    cg.group_name
                 FROM registrations r
                 LEFT JOIN company_members cm ON r.fsy_id = cm.fsy_id
+                LEFT JOIN companies c ON cm.company_id = c.company_id
+                LEFT JOIN companies_groups cg ON cm.group_id = cg.group_id
                 WHERE 
-                    cm.fsy_id IS NULL
-                    AND r.fsy_id = ?
+                    r.fsy_id = ?
                     AND (r.status = 'Approved' OR r.status = 'Awaiting Approval')
                 ORDER BY r.first_name, r.last_name
                 LIMIT 100
@@ -59,12 +62,15 @@ export default async function handler(req, res) {
                 r.status,
                 r.participant_type,
                 r.stake_name,
-                r.unit_name
+                r.unit_name,
+                c.company_name,
+                cg.group_name
             FROM registrations r
             LEFT JOIN company_members cm ON r.fsy_id = cm.fsy_id
+            LEFT JOIN companies c ON cm.company_id = c.company_id
+            LEFT JOIN companies_groups cg ON cm.group_id = cg.group_id
             WHERE 
-                cm.fsy_id IS NULL
-                AND (
+                (
                     CONCAT(r.first_name, ' ', r.last_name) LIKE ?
                     OR r.stake_name LIKE ?
                     OR r.unit_name LIKE ?

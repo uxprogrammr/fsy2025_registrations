@@ -36,7 +36,6 @@ export default async function handler(req, res) {
                 LEFT JOIN companies_groups cg ON cm.group_id = cg.group_id
                 WHERE 
                     (r.status = 'Approved' OR r.status = 'Awaiting Approval')
-                    AND cm.fsy_id IS NULL
                     AND r.fsy_id = ?
                 ORDER BY 
                     CASE 
@@ -75,7 +74,6 @@ export default async function handler(req, res) {
             LEFT JOIN companies_groups cg ON cm.group_id = cg.group_id
             WHERE 
                 (r.status = 'Approved' OR r.status = 'Awaiting Approval')
-                AND cm.fsy_id IS NULL
                 AND (
                     CONCAT(r.first_name, ' ', r.last_name) LIKE ?
                     OR r.stake_name LIKE ?

@@ -75,7 +75,7 @@ async function getCompanyMembers(req, res) {
 }
 
 async function addCompanyMember(req, res) {
-    const { fsy_id, company_id, group_id } = req.body;
+    const { fsy_id, company_id, group_id, transfer = false } = req.body;
 
     // Validate required fields
     if (!fsy_id || !company_id || !group_id) {
@@ -99,23 +99,17 @@ async function addCompanyMember(req, res) {
             });
         }
 
-        // if (member.status !== 'Approved') {
-        //     return res.status(400).json({
-        //         success: false,
-        //         message: 'Only approved members can be added to a company'
-        //     });
-        // }
-
         // Check if member is already in a company
         const [existingMember] = await query(
             'SELECT company_id FROM company_members WHERE fsy_id = ?',
             [fsy_id]
         );
 
-        if (existingMember) {
+        if (existingMember && !transfer) {
             return res.status(409).json({
                 success: false,
-                message: 'Member is already assigned to a company'
+                message: 'Member is already assigned to a company',
+                existingCompanyId: existingMember.company_id
             });
         }
 
@@ -147,11 +141,19 @@ async function addCompanyMember(req, res) {
         await query('START TRANSACTION');
 
         try {
-            // Add member to company with group
-            await query(
-                'INSERT INTO company_members (company_id, fsy_id, group_id) VALUES (?, ?, ?)',
-                [company_id, fsy_id, group_id]
-            );
+            if (existingMember) {
+                // Update existing member's company and group
+                await query(
+                    'UPDATE company_members SET company_id = ?, group_id = ? WHERE fsy_id = ?',
+                    [company_id, group_id, fsy_id]
+                );
+            } else {
+                // Add new member to company with group
+                await query(
+                    'INSERT INTO company_members (company_id, fsy_id, group_id) VALUES (?, ?, ?)',
+                    [company_id, fsy_id, group_id]
+                );
+            }
 
             // Update registrations table with company and group names
             await query(
@@ -164,7 +166,7 @@ async function addCompanyMember(req, res) {
 
             return res.status(201).json({
                 success: true,
-                message: 'Member added successfully'
+                message: existingMember ? 'Member transferred successfully' : 'Member added successfully'
             });
         } catch (error) {
             // Rollback in case of error
