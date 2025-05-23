@@ -19,7 +19,15 @@ function NotesModal({ open, onClose, notes, loading, onPhotoClick }) {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
             <div className="bg-white rounded-lg shadow-lg w-full max-w-6xl p-6 relative text-gray-800">
                 <button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-3xl font-bold w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-200 transition" onClick={onClose} aria-label="Close">&times;</button>
-                <h2 className="text-xl font-bold mb-4">Notes</h2>
+                <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-bold">Notes</h2>
+                    {notes && notes.length > 0 && (
+                        <div className="text-lg font-bold text-yellow-700 flex items-center mr-16">
+                            Final Score:&nbsp;
+                            <span className="text-2xl ml-2">{notes[notes.length - 1].running_score}</span>
+                        </div>
+                    )}
+                </div>
                 {loading ? (
                     <div className="flex justify-center items-center h-32">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
@@ -38,6 +46,8 @@ function NotesModal({ open, onClose, notes, loading, onPhotoClick }) {
                                     <th className="p-2 text-left">Message</th>
                                     <th className="p-2 text-left">Photo</th>
                                     <th className="p-2 text-left">Created</th>
+                                    <th className="p-2 text-left">Score</th>
+                                    <th className="p-2 text-left">Running Score</th>
                                     <th className="p-2 text-left">Recorded By</th>
                                 </tr>
                             </thead>
@@ -57,6 +67,8 @@ function NotesModal({ open, onClose, notes, loading, onPhotoClick }) {
                                             )}
                                         </td>
                                         <td className="p-2 whitespace-nowrap text-gray-800">{new Date(note.created_at).toLocaleString()}</td>
+                                        <td className="p-2 whitespace-nowrap text-gray-800 text-center">{note.score > 0 ? `+${note.score}` : note.score}</td>
+                                        <td className="p-2 whitespace-nowrap text-gray-800 text-center">{note.running_score}</td>
                                         <td className="p-2 whitespace-nowrap text-gray-800">{note.recorded_by}</td>
                                     </tr>
                                 ))}
