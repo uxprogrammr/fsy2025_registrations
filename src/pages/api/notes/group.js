@@ -26,25 +26,21 @@ export default async function handler(req, res) {
     try {
         const notes = await query(`
             SELECT concat(r.first_name, ' ', r.last_name) as full_name,
-                tempNotes.note_type,
-                tempNotes.category,
-                tempNotes.severity,
-                tempNotes.message,
-                tempNotes.photo_url,
-                tempNotes.created_at,
-                tempNotes.updated_at,
+                note_type,
+                category,
+                severity,
+                message,
+                photo_url,
+                created_at,
+                updated_at,
                 concat(r2.first_name, ' ', r2.last_name) as recorded_by
-            FROM (
-                SELECT * FROM participant_notes
-                WHERE participant_fsy_id IN (
-                    SELECT fsy_id FROM company_members 
-                    WHERE company_id = (SELECT company_id FROM companies WHERE company_name = ?) 
-                      AND group_id = (SELECT group_id FROM companies_groups WHERE group_name = ?)
-                )
-            ) as tempNotes
+            FROM (SELECT * FROM participant_notes
+                WHERE participant_fsy_id IN (SELECT fsy_id FROM company_members cm
+                                                INNER JOIN (SELECT * FROM companies WHERE company_name = ?) c ON c.company_id = cm.company_id
+                                                INNER JOIN companies_groups cg ON cg.group_id = cm.group_id
+                                                WHERE cg.group_name = ?)) as tempNotes
             INNER JOIN registrations r ON r.fsy_id = tempNotes.participant_fsy_id
-            INNER JOIN registrations r2 ON r2.fsy_id = tempNotes.counselor_fsy_id
-            ORDER BY tempNotes.created_at DESC
+            INNER JOIN registrations r2 ON r2.fsy_id = tempNotes.counselor_fsy_id;
         `, [company_name, group_name]);
 
         // Add score and running_score
