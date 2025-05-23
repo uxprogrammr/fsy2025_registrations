@@ -154,13 +154,13 @@ export default function Notes() {
                                 </div>
                             </div>
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="bg-green-50 p-3 rounded">
+                                <div className={`p-3 rounded ${note.positive_notes > 0 ? 'bg-green-50' : 'bg-gray-100'}`}>
                                     <p className="text-sm text-gray-600">Positive Notes</p>
-                                    <p className="text-2xl font-bold text-green-600">{note.positive_notes}</p>
+                                    <p className="text-2xl font-bold text-gray-800">{note.positive_notes}</p>
                                 </div>
-                                <div className="bg-red-50 p-3 rounded">
+                                <div className={`p-3 rounded ${note.negative_notes > 0 ? 'bg-red-50' : 'bg-gray-100'}`}>
                                     <p className="text-sm text-gray-600">Negative Notes</p>
-                                    <p className="text-2xl font-bold text-red-600">{note.negative_notes}</p>
+                                    <p className="text-2xl font-bold text-gray-800">{note.negative_notes}</p>
                                 </div>
                             </div>
                         </div>
