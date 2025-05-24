@@ -254,6 +254,14 @@ export default function AddMembersModal({ isOpen, onClose }) {
 
     const handleDeleteMember = async (member) => {
         try {
+            const confirmDelete = window.confirm(
+                `Are you sure you want to remove ${member.full_name} from ${member.company_name} - ${member.group_name}?`
+            );
+    
+            if (!confirmDelete) {
+                return;
+            }
+
             setLoading(true);
             const response = await fetch(`/api/company/members/${member.fsy_id}`, {
                 method: 'DELETE',
