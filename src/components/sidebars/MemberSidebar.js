@@ -195,6 +195,7 @@ export default function MemberSidebar({ onApplyFilter }) {
                     <option value="Approved">Approved</option>
                     <option value="Cancelled">Cancelled</option>
                     <option value="No Show">No Show</option>
+                    <option value="Went Home">Went Home</option>
                 </select>
             </div>
 
